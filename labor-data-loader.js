@@ -44,11 +44,20 @@
     return { COUNTS: { auto: {}, total: RAW.length }, RAW };
   }
 
+  // Sem login na Microsoft ou sem permissao no SharePoint, o navegador pode ficar
+  // preso no redirecionamento de login sem disparar onerror. O timeout garante que
+  // o aviso de acesso apareca mesmo assim.
+  const TIMEOUT_MS = 20000;
+
   window.LABOR_DASH_READY = new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('Tempo esgotado ao carregar os dados do SharePoint. Link dos dados: ' + url));
+    }, TIMEOUT_MS);
     const script = document.createElement('script');
     script.src = scriptUrl;
     script.async = true;
     script.onload = () => {
+      clearTimeout(timer);
       if(window.LABOR_DASH && window.LABOR_DASH.RAW){
         if(!window.LABOR_DASH_META) window.LABOR_DASH_META = { source: 'Dados: ' + url };
         resolve(window.LABOR_DASH);
@@ -63,6 +72,7 @@
       reject(new Error('Arquivo de dados carregou, mas nao criou window.LABOR_DASH nem window.LABOR_DASH_RAW_ROWS.'));
     };
     script.onerror = () => {
+      clearTimeout(timer);
       reject(new Error('Nao foi possivel carregar os dados do SharePoint. Entre com sua conta Microsoft/SharePoint em outra aba, confirme que voce tem permissao para o arquivo labor-data.js e recarregue este dashboard. Link dos dados: ' + url));
     };
     document.head.appendChild(script);
