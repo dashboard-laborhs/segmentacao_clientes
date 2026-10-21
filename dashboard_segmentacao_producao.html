@@ -19,6 +19,17 @@
 window.LABOR_DASH_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r/sites/DashboardSegmentaoClientes/Shared%20Documents/labor-data.js?d=wee5043ccac7d4f72a7d23009f68748ca&csf=1&web=1&e=kcd93x';
 window.LABOR_DASH_SHAREPOINT_SITE_URL = 'https://bunzlbr.sharepoint.com/sites/DashboardSegmentaoClientes';
 window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r/sites/DashboardSegmentaoClientes/Shared%20Documents/labor-data-operacional.js?d=w8c871fb163824d8ea9a32725cbe0a99d&csf=1&web=1&e=hhoikN';
+// Carteira restrita: ?carteira=vendedores/fulano-silva carrega só os arquivos daquela
+// carteira (gerados pelo Power Automate em Shared Documents/carteiras/). O sigilo vem das
+// permissões de cada arquivo no SharePoint: sem permissão, cai no aviso de acesso.
+(function(){
+  const carteira = new URLSearchParams(window.location.search).get('carteira');
+  if(!carteira || !/^[a-z0-9_-]+(\/[a-z0-9_-]+)?$/i.test(carteira)) return;
+  const base = 'https://bunzlbr.sharepoint.com/sites/DashboardSegmentaoClientes/Shared%20Documents/carteiras/';
+  window.LABOR_DASH_CARTEIRA = carteira;
+  window.LABOR_DASH_SCRIPT_URL = base + carteira + '.js';
+  window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = base + carteira + '-operacional.js';
+})();
 </script>
 <script src="labor-data-loader.js?v=20261021"></script>
 <style>
