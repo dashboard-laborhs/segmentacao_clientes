@@ -1887,22 +1887,14 @@ class Component extends DCLogic {
       welcomeHasNames:false, welcomeNames:[], visaoLabel:'Visão Gestão · todas as carteiras' };
   }
 
-  // A faixa volta a aparecer quando os dados forem atualizados.
-  welcomeKey(){ return 'labor-faixa-fechada:' + (window.LABOR_DASH_CARTEIRA || 'geral'); }
-  fecharFaixa(){
-    this.setState({showFaixa:false});
-    try{ localStorage.setItem(this.welcomeKey(), (window.LABOR_DASH_META || {}).source || ''); }catch(e){}
-  }
-  faixaFechada(){
-    try{ return localStorage.getItem(this.welcomeKey()) === ((window.LABOR_DASH_META || {}).source || ''); }catch(e){ return false; }
-  }
+  fecharFaixa(){ this.setState({showFaixa:false}); }
 
   componentDidMount(){
     const done = (label, sourceIsError=false)=> this.setState({sourceLabel:label, sourceIsError});
     const markLoaded = ()=>{
       const meta = window.LABOR_DASH_META || {};
       done(meta.source || 'Fonte de dados');
-      this.setState({dashboardVisible:true, showFaixa:!this.faixaFechada()});
+      this.setState({dashboardVisible:true, showFaixa:true});
     };
     if(window.LABOR_DASH_OPERACIONAL_READY){
       window.LABOR_DASH_OPERACIONAL_READY.then((op)=>{
