@@ -774,7 +774,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1340,&quot;height&quot;:900}}">
 class Component extends DCLogic {
-  state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'coligada', tourActive:false, tourStep:0, showWelcome:false };
+  state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'loja', tourActive:false, tourStep:0, showWelcome:false };
 
   TOUR_STEPS = [
     {target:'#tour-total', title:'Base de clientes', text:'Total de clientes ativos na base analisada. O número muda conforme o agrupamento escolhido (por cliente ou por Coligada).'},
@@ -783,7 +783,7 @@ class Component extends DCLogic {
       {bold:'Visão Oficial:', text:' cards, tabela completa e filtros com a segmentação atual dos clientes (Últimos 12 meses fechados).'},
       {bold:'Tendência das Mudanças:', text:' mostra quem está prestes a subir ou descer de segmento com o mês vigente em andamento.'}
     ]},
-    {target:'#tour-agrupamento', title:'Por cliente ou por Coligada', text:'Clientes de uma mesma Coligada aparecem agrupados. Ative "Por cliente" para ver os clientes separados.'},
+    {target:'#tour-agrupamento', title:'Por cliente ou por Coligada', text:'Por padrão, cada cliente aparece separado. Ative "Por coligada" para agrupar os clientes de uma mesma Coligada.'},
     {target:'#tour-toggle-modo', title:'Oficial vs Operacional', text:'"Oficial" é o dado fechado do último mês. "Operacional" é uma prévia dinâmica, recalculada todo dia, mostrando como ficaria a segmentação se o mês fechasse hoje.'},
     {target:'#tour-criterios', title:'Critérios por segmento', text:'Veja os critérios oficiais (Faturamento, Cash Margin, SKUs e Meses c/ compra) exigidos em cada segmento.'},
     {target:'#tour-simulacao', title:'Simulação temporária', text:'Simule temporariamente novos valores de critério pra testar cenários — não afeta o dado oficial, e volta ao padrão ao atualizar a página.'},
