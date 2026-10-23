@@ -65,6 +65,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:11px">
           <span style="font-size:12px;font-weight:700;color:#4F5D78;background:#f3f5fb;border:1px solid #e4e8f4;border-radius:999px;padding:6px 10px">{{ analysisPeriodLabel }} · {{ analysisPeriod }}</span>
           <span style="font-size:12px;font-weight:700;color:#4F5D78;background:#f3f5fb;border:1px solid #e4e8f4;border-radius:999px;padding:6px 10px">Tipo de Cliente: Revenda</span>
+          <span style="font-size:12px;font-weight:700;color:#2850EF;background:#eef1fe;border:1px solid #d7defc;border-radius:999px;padding:6px 10px">{{ visaoLabel }}</span>
         </div>
         <p style="font-size:11.5px;margin:10px 0 0;color:{{ sourceColor }};font-weight:600">{{ sourceLabel }}</p>
       </div>
@@ -85,6 +86,24 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         <img src="labor-logo.png" alt="Labor Health Supply" style="height:54px;width:116px;display:block;object-fit:contain">
       </div>
     </header>
+
+    <!-- Boas-vindas -->
+    <sc-if value="{{ showFaixa }}" hint-placeholder-val="{{ true }}">
+      <section style="background:linear-gradient(90deg,#eef1fe 0%,#fff 55%);border:1px solid #dfe5fd;border-left:4px solid #2850EF;border-radius:16px;margin:-8px 0 24px;padding:16px 20px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 18px rgba(11,23,51,.04)">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:18px;font-weight:800;color:#0B1733">{{ welcomeTitle }}</div>
+          <div style="font-size:13px;color:#4F5D78;margin-top:4px;line-height:1.45">{{ welcomePre }}<b>{{ welcomeBold }}</b>{{ welcomePost }}</div>
+          <sc-if value="{{ welcomeHasNames }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+              <sc-for list="{{ welcomeNames }}" as="n" hint-placeholder-count="3">
+                <span style="font-size:11px;font-weight:700;color:#4F5D78;background:#fff;border:1px solid #e4e8f4;border-radius:999px;padding:4px 9px">{{ n.nome }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <button onClick="{{ fecharFaixa }}" title="Fechar" style="font-family:inherit;font-size:16px;line-height:1;border-radius:10px;width:34px;height:34px;flex-shrink:0;cursor:pointer;border:1px solid #dde1ee;background:#fff;color:#6A748F">×</button>
+      </section>
+    </sc-if>
 
     <!-- Navegação -->
     <nav style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap">
@@ -730,20 +749,6 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
   </sc-if>
 
-  <sc-if value="{{ showWelcome }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;background:rgba(11,23,51,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:250">
-      <div style="background:#fff;border:1px solid #e4e8f4;border-radius:20px;max-width:420px;width:100%;padding:36px 32px;text-align:center;box-shadow:0 24px 64px rgba(11,23,51,.3)">
-        <div style="font-size:40px;margin-bottom:14px">👋</div>
-        <div style="font-size:19px;font-weight:800;color:#0B1733;margin-bottom:10px">Bem-vindo(a) ao Dashboard de Segmentação!</div>
-        <div style="font-size:13.5px;color:#6A748F;line-height:1.5;margin-bottom:24px">Preparamos um tour rápido mostrando os principais recursos da tela — leva menos de 1 minuto. Quer dar uma olhada?</div>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-          <button onClick="{{ startTourFromWelcome }}" style="font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:10px 18px;cursor:pointer;border:1px solid #2850EF;background:#2850EF;color:#fff">Sim, fazer o tour</button>
-          <button onClick="{{ dismissWelcome }}" style="font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:10px 18px;cursor:pointer;border:1px solid #dde1ee;background:#fff;color:#0B1733">Agora não, obrigado</button>
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
   <sc-if value="{{ noAccess }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;background:radial-gradient(120% 120% at 50% 0%, #EDF1FA 0%, #DEE4F2 100%);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;overflow-y:auto">
       <div style="background:#fff;border:1px solid #e4e8f4;border-radius:20px;max-width:480px;width:100%;padding:36px 32px;text-align:center;box-shadow:0 20px 60px rgba(11,23,51,.12)">
@@ -774,7 +779,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1340,&quot;height&quot;:900}}">
 class Component extends DCLogic {
-  state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'loja', tourActive:false, tourStep:0, showWelcome:false };
+  state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'loja', tourActive:false, tourStep:0, showFaixa:false };
 
   TOUR_STEPS = [
     {target:'#tour-total', title:'Base de clientes', text:'Total de clientes ativos na base analisada. O número muda conforme o agrupamento escolhido (por cliente ou por Coligada).'},
@@ -1133,9 +1138,9 @@ class Component extends DCLogic {
       noAccess: this.state.noAccess,
       recarregarPagina: ()=> window.location.reload(),
       entrarSharePoint: ()=> this.entrarSharePoint(),
-      showWelcome: this.state.showWelcome,
-      dismissWelcome: ()=> this.setState({showWelcome:false}),
-      startTourFromWelcome: ()=> { this.setState({showWelcome:false}); this.startTour(); },
+      showFaixa: this.state.showFaixa,
+      fecharFaixa: ()=> this.fecharFaixa(),
+      ...this.welcomeInfo(),
       totalFmt: this.fmtInt(totalOficial),
       sourceLabel: this.state.sourceLabel,
       sourceColor: this.state.sourceIsError ? '#9C4A3A' : '#8A94AD',
@@ -1856,12 +1861,47 @@ class Component extends DCLogic {
     document.addEventListener('visibilitychange', onVisible);
   }
 
+  // Faixa de boas-vindas: o nome vem do proprio arquivo de dados (a pagina
+  // nao sabe quem esta logado). Vendedor: nome derivado das linhas; grupo:
+  // LABOR_DASH_META.usuario gravado pelo fluxo; Gestao: sem nome.
+  welcomeInfo(){
+    const carteira = window.LABOR_DASH_CARTEIRA || '';
+    const meta = window.LABOR_DASH_META || {};
+    const rows = Array.isArray(window.LABOR_DASH_RAW_ROWS) ? window.LABOR_DASH_RAW_ROWS : [];
+    const nomes = [...new Set(rows.map(r=>String(r['d_Cliente[Nome Vendedor Proper]']||'').replace(/\s+/g,' ').trim()).filter(Boolean))].sort();
+    const total = this.fmtInt(window.LABOR_DASH?.COUNTS?.total || rows.length);
+    const nClientes = total + (total === '1' ? ' cliente' : ' clientes');
+    const ola = (nome)=> nome ? 'Olá, ' + nome + '! 👋' : 'Olá! 👋';
+    if(carteira.startsWith('vendedores/')){
+      const nome = meta.nome || (nomes.length === 1 ? nomes[0] : '');
+      return { welcomeTitle: ola(meta.usuario || nome.split(' ')[0]), welcomePre:'Esta é a ', welcomeBold:'sua carteira', welcomePost:': ' + nClientes + '.',
+        welcomeHasNames:false, welcomeNames:[], visaoLabel: nome ? 'Carteira: ' + nome : 'Sua carteira' };
+    }
+    if(carteira.startsWith('grupos/')){
+      const nv = nomes.length + (nomes.length === 1 ? ' vendedor' : ' vendedores');
+      return { welcomeTitle: ola(meta.usuario), welcomePre:'Esta é a visão do ', welcomeBold:'seu grupo', welcomePost:': ' + nv + ' e ' + nClientes + '.',
+        welcomeHasNames: nomes.length > 0, welcomeNames: nomes.map(nome=>({nome})), visaoLabel: (meta.usuario ? 'Grupo: ' + meta.usuario + ' · ' : 'Grupo · ') + nv };
+    }
+    return { welcomeTitle: ola(''), welcomePre:'Você está na ', welcomeBold:'Visão Gestão', welcomePost:', com todas as carteiras: ' + nClientes + '.',
+      welcomeHasNames:false, welcomeNames:[], visaoLabel:'Visão Gestão · todas as carteiras' };
+  }
+
+  // A faixa volta a aparecer quando os dados forem atualizados.
+  welcomeKey(){ return 'labor-faixa-fechada:' + (window.LABOR_DASH_CARTEIRA || 'geral'); }
+  fecharFaixa(){
+    this.setState({showFaixa:false});
+    try{ localStorage.setItem(this.welcomeKey(), (window.LABOR_DASH_META || {}).source || ''); }catch(e){}
+  }
+  faixaFechada(){
+    try{ return localStorage.getItem(this.welcomeKey()) === ((window.LABOR_DASH_META || {}).source || ''); }catch(e){ return false; }
+  }
+
   componentDidMount(){
     const done = (label, sourceIsError=false)=> this.setState({sourceLabel:label, sourceIsError});
     const markLoaded = ()=>{
       const meta = window.LABOR_DASH_META || {};
       done(meta.source || 'Fonte de dados');
-      this.setState({dashboardVisible:true, showWelcome:true});
+      this.setState({dashboardVisible:true, showFaixa:!this.faixaFechada()});
     };
     if(window.LABOR_DASH_OPERACIONAL_READY){
       window.LABOR_DASH_OPERACIONAL_READY.then((op)=>{
