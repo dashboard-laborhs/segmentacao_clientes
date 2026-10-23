@@ -1863,7 +1863,7 @@ class Component extends DCLogic {
   }
 
   // Faixa de boas-vindas: o nome vem do proprio arquivo de dados (a pagina
-  // nao sabe quem esta logado). Vendedor: nome derivado das linhas; grupo:
+  // nao sabe quem esta logado). Vendedor: nome completo das linhas; grupo:
   // LABOR_DASH_META.usuario gravado pelo fluxo; Gestao: sem nome.
   welcomeInfo(){
     const carteira = window.LABOR_DASH_CARTEIRA || '';
@@ -1875,7 +1875,7 @@ class Component extends DCLogic {
     const ola = (nome)=> nome ? 'Olá, ' + nome + '! 👋' : 'Olá! 👋';
     if(carteira.startsWith('vendedores/')){
       const nome = meta.nome || (nomes.length === 1 ? nomes[0] : '');
-      return { welcomeTitle: ola(meta.usuario || nome.split(' ')[0]), welcomePre:'Esta é a ', welcomeBold:'sua carteira', welcomePost:': ' + nClientes + '.',
+      return { welcomeTitle: ola(meta.usuario || nome), welcomePre:'Esta é a ', welcomeBold:'sua carteira', welcomePost:': ' + nClientes + '.',
         welcomeHasNames:false, welcomeNames:[], visaoLabel: nome ? 'Carteira: ' + nome : 'Sua carteira' };
     }
     if(carteira.startsWith('grupos/')){
