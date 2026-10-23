@@ -155,6 +155,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       </div>
       </div>
       </div>
+      <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ true }}">
       <div id="tour-simulacao" style="margin-top:16px;padding-top:14px;border-top:1px solid #eef0f7">
         <div class="lbr-expand-header" onClick="{{ toggleCriteriaPanel }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:{{ criteriaBodyMargin }};padding:8px;margin-left:-8px;margin-right:-8px;margin-top:-8px;border-radius:12px">
           <div>
@@ -203,6 +204,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
         </div>
       </div>
+      </sc-if>
     </section>
     </div>
     </div>
@@ -787,7 +789,8 @@ class Component extends DCLogic {
     {target:'#tour-simulacao', title:'Simulação temporária', text:'Simule temporariamente novos valores de critério pra testar cenários — não afeta o dado oficial, e volta ao padrão ao atualizar a página.'},
     {target:'#tour-cards', title:'Resumo por segmento', text:'Quantos clientes em cada segmento, e quantos subiram ou desceram desde a janela anterior.'},
     {target:'#tour-filtros', title:'Busca e filtros', text:'Busque por nome, ID, CNPJ ou Coligada, e filtre por vendedor ou direção de mudança de segmento.'}
-  ];
+
+  ].filter(s => !(window.LABOR_DASH_CARTEIRA && s.target === '#tour-simulacao'));
 
   PER = 30;
   ORDER = {DIAMOND:4,PLATINUM:3,GOLD:2,STANDARD:1,'SEM SEGMENTAÇÃO':0};
@@ -1139,6 +1142,7 @@ class Component extends DCLogic {
       headerSourceColor: this.state.sourceIsError ? '#FFD6CC' : 'rgba(255,255,255,.68)',
       rules, cards, criteriaRows, vendedores,
       simulationActive,
+      isGestao: !window.LABOR_DASH_CARTEIRA,
       segmentHeaderSubDisplay: simulationActive ? 'block' : 'none',
       modoOficialAtivo: this.state.dataMode === 'oficial',
       criteriosGridRows: this.state.dataMode === 'oficial' ? '1fr' : '0fr',
