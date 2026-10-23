@@ -1860,8 +1860,7 @@ class Component extends DCLogic {
     const done = (label, sourceIsError=false)=> this.setState({sourceLabel:label, sourceIsError});
     const markLoaded = ()=>{
       const meta = window.LABOR_DASH_META || {};
-      const total = window.LABOR_DASH?.COUNTS?.total || 0;
-      done((meta.source || 'Fonte de dados') + ' · ' + this.fmtInt(total) + ' clientes');
+      done(meta.source || 'Fonte de dados');
       this.setState({dashboardVisible:true, showWelcome:true});
     };
     if(window.LABOR_DASH_OPERACIONAL_READY){
