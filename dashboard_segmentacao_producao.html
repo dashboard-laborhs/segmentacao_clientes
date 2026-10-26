@@ -1221,7 +1221,7 @@ class Component extends DCLogic {
       tVendedores: tendencia ? tendencia.vendedores : [],
       tRows: tendencia ? tendencia.rows : [],
       tCountLabel: tendencia ? this.fmtInt(tendencia.rows.length) : '0',
-      exportTendencia: ()=> tendencia && this.exportTendencia(tendencia.rows),
+      exportTendencia: ()=> this.exportTendencia(),
       tExportDisabled: tendencia && tendencia.rows.length ? undefined : true,
       tExportOpacity: tendencia && tendencia.rows.length ? '1' : '.45',
       tSubindoTotal: tendencia ? this.fmtInt(tendencia.subindo.total) : '0',
@@ -1286,7 +1286,7 @@ class Component extends DCLogic {
       closeTrend: ()=> this.setState({trendRow:null}),
       stopClick: (e)=> e.stopPropagation(),
       countLabel: this.fmtInt(rowsAll.length),
-      exportRows: ()=> this.exportRows(rowsAll),
+      exportRows: ()=> this.exportRows(),
       exportDisabled: rowsAll.length ? undefined : true,
       exportOpacity: rowsAll.length ? '1' : '.45',
       pageRows,
@@ -1309,75 +1309,185 @@ class Component extends DCLogic {
     else this.setState({sortCol:col, sortDir:-1, page:0});
   }
 
-  exportRows(rows){
-    const isOperacional = this.state.dataMode === 'operacional';
+  // Exportacao em Excel: cabecalho com titulo, data dos dados, periodo e
+  // criterios, mais uma aba por cliente e outra agrupada por Coligada.
+  // A biblioteca (SheetJS) so e carregada no primeiro clique.
+  loadXlsx(){
+    if(window.XLSX) return Promise.resolve(window.XLSX);
+    if(!this._xlsxPromise){
+      this._xlsxPromise = new Promise((resolve, reject)=>{
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        s.onload = ()=> resolve(window.XLSX);
+        s.onerror = ()=> { this._xlsxPromise = null; reject(new Error('Não foi possível carregar o gerador de Excel.')); };
+        document.head.appendChild(s);
+      });
+    }
+    return this._xlsxPromise;
+  }
+
+  nomeLimpo(v){ return String(v || '').replace(/\s+/g, ' ').trim(); }
+
+  criteriosTexto(crit){
+    return ['DIAMOND','PLATINUM','GOLD'].map(l=>{
+      const c = crit[l];
+      return l + ': Fat. ≥ ' + this.fmtBRL(c.fm) + ' · Cash Margin ≥ ' + this.fmtBRL(c.mg) + ' · Meses ≥ ' + c.mc + ' · SKUs ≥ ' + c.sk;
+    }).join('   |   ') + '   |   STANDARD: demais';
+  }
+
+  cabecalhoExport(titulo, periodo, aviso, filtros){
+    const meta = window.LABOR_DASH_META || {};
+    const linhas = [
+      [titulo],
+      [this.welcomeInfo().visaoLabel],
+      [meta.source || ''],
+      ['Período do critério: ' + periodo],
+      ['Critérios: ' + this.criteriosTexto(this.DEFAULT_CRITERIA)]
+    ];
+    if(this.criteriaActiveFor(this.criteria())) linhas.push(['Simulação temporária: ' + this.criteriosTexto(this.criteria())]);
+    if(aviso) linhas.push([aviso]);
+    const ativos = filtros.filter(f=>f[1]).map(f=>f[0] + ': ' + f[1]);
+    if(ativos.length) linhas.push(['Filtros aplicados: ' + ativos.join(' · ')]);
+    const d = new Date(), pad = n => String(n).padStart(2,'0');
+    linhas.push(['Exportado em ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes())]);
+    linhas.push([]);
+    return linhas;
+  }
+
+  // cols: [rotulo, funcao, formato] com formato 'brl' | 'pct' | 'int' | undefined
+  montarAba(XLSX, cabecalho, cols, rows){
+    const fmts = {brl:'"R$" #,##0', pct:'0.0%', int:'0'};
+    const valor = (c, r)=>{
+      const v = c[1](r);
+      if(c[2] === 'pct') return (Number(v) || 0) / 100;
+      if(c[2] === 'int') return Math.round(Number(v) || 0);
+      if(c[2] === 'brl') return Number(v) || 0;
+      return v ?? '';
+    };
+    const aoa = cabecalho.concat([cols.map(c=>c[0])], rows.map(r=>cols.map(c=>valor(c, r))));
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const inicio = cabecalho.length;
+    rows.forEach((_, i)=> cols.forEach((c, j)=>{
+      if(!c[2]) return;
+      const cell = ws[XLSX.utils.encode_cell({r:inicio + 1 + i, c:j})];
+      if(cell) cell.z = fmts[c[2]];
+    }));
+    ws['!cols'] = cols.map(c=> ({wch: Math.max(12, Math.min(48, c[0].length + 2))}));
+    ws['!merges'] = cabecalho.map((l, i)=> l.length ? {s:{r:i, c:0}, e:{r:i, c:cols.length - 1}} : null).filter(Boolean);
+    ws['!autofilter'] = {ref: XLSX.utils.encode_range({s:{r:inicio, c:0}, e:{r:inicio + rows.length, c:cols.length - 1}})};
+    return ws;
+  }
+
+  // Agrupa linhas de cliente por Coligada; clientes sem Coligada ficam como estao.
+  porColigada(rows, getCol){
+    const grupos = {}, ordem = [];
+    rows.forEach(r=>{
+      const col = getCol(r);
+      const k = col ? 'c:' + col : 'i:' + ordem.length;
+      if(!grupos[k]){ grupos[k] = []; ordem.push(k); }
+      grupos[k].push(r);
+    });
+    return ordem.map(k=> grupos[k]);
+  }
+
+  baixarXlsx(XLSX, abas, prefixo){
+    const wb = XLSX.utils.book_new();
+    abas.forEach(a=> XLSX.utils.book_append_sheet(wb, a.ws, a.nome));
+    XLSX.writeFile(wb, prefixo + this.exportDate() + '.xlsx');
+  }
+
+  exportRows(){
+    const s = this.state;
+    const isOperacional = s.dataMode === 'operacional';
     const leg = this.windowLegend();
     const j1 = isOperacional ? 'Hoje - prévia' : 'Janela 1 - ' + leg[6].period;
     const j7 = 'Janela 7 - ' + leg[0].period;
-    const cols = [
-      ['Segmentação (Padrão)', r=>this.criterioPadrao(r)],
-      ['Segmentação (Simulação)', r=>this.criterioCriado(r)],
-      ['Cliente', r=>r.no],
-      ['ID Cliente', r=>r.id],
-      ['Coligada', r=>r.col],
-      ['Vendedor', r=>r.vd],
-      ['Fat. Médio (' + j1 + ')', r=>this.fmtBRL(r.fm)],
-      ['Fat. Médio (' + j7 + ')', r=>this.fmtBRL(r.fm7)],
-      ['Cash Margin Média (' + j1 + ')', r=>this.fmtBRL(r.mg)],
-      ['Cash Margin Média (' + j7 + ')', r=>this.fmtBRL(r.mg7)],
-      ['Margem % (' + j1 + ')', r=>this.fmtPct(r.mb)],
-      ['Margem % (' + j7 + ')', r=>this.fmtPct(r.mb7)],
-      ['Média SKUs (' + j1 + ')', r=>this.fmtInt(Math.round(r.sk||0))],
-      ['Média SKUs (' + j7 + ')', r=>this.fmtInt(Math.round(r.sk7||0))],
-      ['Meses c/ Compra (' + j1 + ')', r=>this.fmtInt(Math.round(r.mc||0))],
-      ['Meses c/ Compra (' + j7 + ')', r=>this.fmtInt(Math.round(r.m7||0))]
+    const {sortCol, sortDir} = s;
+    const clientes = this.data.RAW.filter(r=>this.matchesFilters(r, s, true)).sort((a,b)=>{
+      const va = a[sortCol], vb = b[sortCol];
+      return typeof va === 'string' ? sortDir*va.localeCompare(vb || '') : sortDir*(va - vb);
+    });
+    const metricas = [
+      ['Fat. Médio (' + j1 + ')', r=>r.fm, 'brl'],
+      ['Fat. Médio (' + j7 + ')', r=>r.fm7, 'brl'],
+      ['Cash Margin Média (' + j1 + ')', r=>r.mg, 'brl'],
+      ['Cash Margin Média (' + j7 + ')', r=>r.mg7, 'brl'],
+      ['Margem % (' + j1 + ')', r=>r.mb, 'pct'],
+      ['Margem % (' + j7 + ')', r=>r.mb7, 'pct'],
+      ['Média SKUs (' + j1 + ')', r=>r.sk, 'int'],
+      ['Média SKUs (' + j7 + ')', r=>r.sk7, 'int'],
+      ['Meses c/ Compra (' + j1 + ')', r=>r.mc, 'int'],
+      ['Meses c/ Compra (' + j7 + ')', r=>r.m7, 'int']
     ];
-    this.downloadCsv(cols, rows, 'dashboard_segmentacao_' + (isOperacional ? 'operacional_' : ''));
+    const simulacao = this.criteriaActiveFor(this.criteria()) ? [['Segmentação (Simulação)', r=>this.criterioCriado(r)]] : [];
+    const colsCliente = [
+      ['Segmentação', r=>this.criterioPadrao(r)], ...simulacao,
+      ['Cliente', r=>r.no], ['ID Cliente', r=>r.id], ['CNPJ', r=>r.cnpj], ['Coligada', r=>r.col],
+      ['Vendedor', r=>this.nomeLimpo(r.vd)], ...metricas
+    ];
+    const grupos = this.porColigada(clientes, r=>r.col);
+    const colsColigada = [
+      ['Segmentação', g=>this.criterioPadrao(g[0])],
+      ...simulacao.map(c=>[c[0], g=>c[1](g[0])]),
+      ['Coligada', g=>g[0].col || '(sem coligada)'],
+      ['Qtd. clientes', g=>g.length, 'int'],
+      ['Clientes', g=>g.map(r=>r.no).join(', ')],
+      ['IDs Cliente', g=>g.map(r=>r.id).join(', ')],
+      ['Vendedor(es)', g=>[...new Set(g.map(r=>this.nomeLimpo(r.vd)))].join(', ')],
+      ...metricas.map(c=>[c[0], g=>c[1](g[0]), c[2]])
+    ];
+    const titulo = 'Segmentação de Clientes · ' + (isOperacional ? 'Visão Oficial em modo Operacional (prévia de hoje)' : 'Visão Oficial');
+    const periodo = isOperacional ? this.operacionalPeriod() : leg[6].period + ' (últimos 12 meses fechados)';
+    const aviso = isOperacional ? 'Prévia: mostra como ficaria a segmentação se o mês fechasse hoje. Não é o dado oficial — pode mudar até o fechamento do mês.' : '';
+    const filtros = [['Busca', s.search], ['Segmentação', s.fAtual], ['Simulação', s.fAutoNoSku], ['Direção', s.fDir], ['Critério da mudança', s.fReason], ['Vendedor', this.nomeLimpo(s.fVend)]];
+    this.loadXlsx().then(XLSX=>{
+      const cab = this.cabecalhoExport(titulo, periodo, aviso, filtros);
+      this.baixarXlsx(XLSX, [
+        {nome:'Por cliente', ws:this.montarAba(XLSX, cab, colsCliente, clientes)},
+        {nome:'Por coligada', ws:this.montarAba(XLSX, cab, colsColigada, grupos)}
+      ], 'dashboard_segmentacao_' + (isOperacional ? 'operacional_' : ''));
+    }).catch(err=> alert(err.message));
   }
 
-  exportTendencia(rows){
-    const cols = [
-      ['Cliente', t=>t.x.no],
-      ['ID Cliente', t=>t.x.id],
-      ['Coligada', t=>t.x.col],
-      ['CNPJ', t=>t.x.cnpj],
-      ['Vendedor', t=>t.x.vd],
-      ['Segmentação Oficial', t=>t.x.oficial],
-      ['Segmentação Projetada (hoje)', t=>t.x.projetado],
-      ['Direção', t=>t.x.direcao === 'up' ? 'Subindo' : 'Descendo'],
-      ['Motivo provável', t=>t.x.motivo],
-      ['Fat. Médio Oficial', t=>this.fmtBRL(t.x.r.fm)],
-      ['Fat. Médio Hoje', t=>this.fmtBRL(t.x.op.fm)],
-      ['Cash Margin Média Oficial', t=>this.fmtBRL(t.x.r.mg)],
-      ['Cash Margin Média Hoje', t=>this.fmtBRL(t.x.op.mg)],
-      ['Margem % Oficial', t=>this.fmtPct(t.x.r.mb)],
-      ['Margem % Hoje', t=>this.fmtPct(t.x.op.mb)],
-      ['Média SKUs Oficial', t=>this.fmtInt(Math.round(t.x.r.sk||0))],
-      ['Média SKUs Hoje', t=>this.fmtInt(Math.round(t.x.op.sk||0))],
-      ['Meses c/ Compra Oficial', t=>this.fmtInt(Math.round(t.x.r.mc||0))],
-      ['Meses c/ Compra Hoje', t=>this.fmtInt(Math.round(t.x.op.mc||0))]
+  exportTendencia(){
+    const s = this.state;
+    const clientes = this.tendenciaData('loja').rows.map(t=>t.x);
+    const metricas = [
+      ['Fat. Médio Oficial', x=>x.r.fm, 'brl'], ['Fat. Médio Hoje', x=>x.op.fm, 'brl'],
+      ['Cash Margin Média Oficial', x=>x.r.mg, 'brl'], ['Cash Margin Média Hoje', x=>x.op.mg, 'brl'],
+      ['Margem % Oficial', x=>x.r.mb, 'pct'], ['Margem % Hoje', x=>x.op.mb, 'pct'],
+      ['Média SKUs Oficial', x=>x.r.sk, 'int'], ['Média SKUs Hoje', x=>x.op.sk, 'int'],
+      ['Meses c/ Compra Oficial', x=>x.r.mc, 'int'], ['Meses c/ Compra Hoje', x=>x.op.mc, 'int']
     ];
-    this.downloadCsv(cols, rows, 'dashboard_tendencia_');
-  }
-
-  downloadCsv(cols, rows, prefix){
-    const lines = [
-      cols.map(c=>this.csvCell(c[0])).join(';'),
-      ...rows.map(r=>cols.map(c=>this.csvCell(c[1](r))).join(';'))
+    const mudanca = [
+      ['Segmentação Oficial', x=>x.oficial], ['Segmentação Projetada (hoje)', x=>x.projetado],
+      ['Direção', x=>x.direcao === 'up' ? 'Subindo' : 'Descendo'], ['Motivo provável', x=>x.motivo]
     ];
-    const blob = new Blob(['\uFEFF'+lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = prefix + this.exportDate() + '.csv';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  csvCell(value){
-    return '"' + String(value ?? '').replace(/"/g,'""') + '"';
+    const colsCliente = [
+      ['Cliente', x=>x.no], ['ID Cliente', x=>x.id], ['CNPJ', x=>x.cnpj], ['Coligada', x=>x.col],
+      ['Vendedor', x=>this.nomeLimpo(x.vd)], ...mudanca, ...metricas
+    ];
+    const grupos = this.porColigada(clientes, x=>x.col);
+    const colsColigada = [
+      ['Coligada', g=>g[0].col || '(sem coligada)'],
+      ['Qtd. clientes', g=>g.length, 'int'],
+      ['Clientes', g=>g.map(x=>x.no).join(', ')],
+      ['IDs Cliente', g=>g.map(x=>x.id).join(', ')],
+      ['Vendedor(es)', g=>[...new Set(g.map(x=>this.nomeLimpo(x.vd)))].join(', ')],
+      ...mudanca.concat(metricas).map(c=>[c[0], g=>c[1](g[0]), c[2]])
+    ];
+    const leg = this.windowLegend(true);
+    const periodo = 'Oficial: ' + leg[6].period + ' · Hoje: ' + this.operacionalPeriod();
+    const aviso = 'Prévia: compara a classificação oficial de cada cliente com a projeção de hoje. Não é o dado oficial — pode mudar até o fechamento do mês.';
+    const dirs = {up:'Só subindo', down:'Só descendo'};
+    const filtros = [['Busca', s.tSearch], ['Direção', dirs[s.tFDir] || s.tFDir], ['Motivo', s.tFMotivo], ['Vendedor', this.nomeLimpo(s.tFVend)]];
+    this.loadXlsx().then(XLSX=>{
+      const cab = this.cabecalhoExport('Segmentação de Clientes · Tendência das Mudanças', periodo, aviso, filtros);
+      this.baixarXlsx(XLSX, [
+        {nome:'Por cliente', ws:this.montarAba(XLSX, cab, colsCliente, clientes)},
+        {nome:'Por coligada', ws:this.montarAba(XLSX, cab, colsColigada, grupos)}
+      ], 'dashboard_tendencia_');
+    }).catch(err=> alert(err.message));
   }
 
   exportDate(){
@@ -1739,7 +1849,7 @@ class Component extends DCLogic {
     return impacted.length ? impacted.join(' + ') : 'Combinação de critérios';
   }
 
-  tendenciaData(){
+  tendenciaData(agrup){
     const officialRAW = window.LABOR_DASH?.RAW || [];
     const opInfo = window.LABOR_DASH_OPERACIONAL;
     const byId = opInfo ? (opInfo.byId || {}) : {};
@@ -1768,7 +1878,7 @@ class Component extends DCLogic {
     // membro de uma Coligada tem oficial/projetado/motivo identicos, ja que a
     // classificacao e calculada no nivel da Coligada) - colapsa numa linha so.
     let agrupado = all;
-    if(this.state.agrupamento === 'coligada'){
+    if((agrup || this.state.agrupamento) === 'coligada'){
       const semColigada = all.filter(x=>!x.col);
       const porColigada = {};
       all.filter(x=>x.col).forEach(x=>{ (porColigada[x.col] = porColigada[x.col] || []).push(x); });
