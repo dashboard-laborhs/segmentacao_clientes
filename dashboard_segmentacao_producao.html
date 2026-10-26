@@ -583,7 +583,13 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             </sc-for>
           </select>
         </div>
-        <div style="font-size:12.5px;color:#6A748F;padding-bottom:9px">{{ tCountLabel }} clientes mudando</div>
+        <div style="display:flex;align-items:center;gap:10px;padding-bottom:5px;margin-left:auto">
+          <div style="font-size:12.5px;color:#6A748F">{{ tCountLabel }} clientes mudando</div>
+          <button onClick="{{ exportTendencia }}" disabled="{{ tExportDisabled }}" style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:9px;padding:7px 11px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;opacity:{{ tExportOpacity }}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2850EF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+            Exportar tabela
+          </button>
+        </div>
       </section>
 
       <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden">
@@ -1215,6 +1221,9 @@ class Component extends DCLogic {
       tVendedores: tendencia ? tendencia.vendedores : [],
       tRows: tendencia ? tendencia.rows : [],
       tCountLabel: tendencia ? this.fmtInt(tendencia.rows.length) : '0',
+      exportTendencia: ()=> tendencia && this.exportTendencia(tendencia.rows),
+      tExportDisabled: tendencia && tendencia.rows.length ? undefined : true,
+      tExportOpacity: tendencia && tendencia.rows.length ? '1' : '.45',
       tSubindoTotal: tendencia ? this.fmtInt(tendencia.subindo.total) : '0',
       tSubindoBreakdown: tendencia ? tendencia.subindo.breakdown : [],
       tDescendoTotal: tendencia ? this.fmtInt(tendencia.descendo.total) : '0',
@@ -1301,6 +1310,10 @@ class Component extends DCLogic {
   }
 
   exportRows(rows){
+    const isOperacional = this.state.dataMode === 'operacional';
+    const leg = this.windowLegend();
+    const j1 = isOperacional ? 'Hoje - prévia' : 'Janela 1 - ' + leg[6].period;
+    const j7 = 'Janela 7 - ' + leg[0].period;
     const cols = [
       ['Segmentação (Padrão)', r=>this.criterioPadrao(r)],
       ['Segmentação (Simulação)', r=>this.criterioCriado(r)],
@@ -1308,17 +1321,46 @@ class Component extends DCLogic {
       ['ID Cliente', r=>r.id],
       ['Coligada', r=>r.col],
       ['Vendedor', r=>r.vd],
-      ['Fat. Médio (Janela 1 - Últ. 12 m)', r=>this.fmtBRL(r.fm)],
-      ['Fat. Médio (Janela 7 - 2025)', r=>this.fmtBRL(r.fm7)],
-      ['Cash Margin Média (Janela 1 - Últ. 12 m)', r=>this.fmtBRL(r.mg)],
-      ['Cash Margin Média (Janela 7 - 2025)', r=>this.fmtBRL(r.mg7)],
-      ['Margem % (Janela 1 - Últ. 12 m)', r=>this.fmtPct(r.mb)],
-      ['Margem % (Janela 7 - 2025)', r=>this.fmtPct(r.mb7)],
-      ['Média SKUs (Janela 1 - Últ. 12 m)', r=>this.fmtInt(Math.round(r.sk||0))],
-      ['Média SKUs (Janela 7 - 2025)', r=>this.fmtInt(Math.round(r.sk7||0))],
-      ['Meses c/ Compra (Janela 1 - Últ. 12 m)', r=>this.fmtInt(Math.round(r.mc||0))],
-      ['Meses c/ Compra (Janela 7 - 2025)', r=>this.fmtInt(Math.round(r.m7||0))]
+      ['Fat. Médio (' + j1 + ')', r=>this.fmtBRL(r.fm)],
+      ['Fat. Médio (' + j7 + ')', r=>this.fmtBRL(r.fm7)],
+      ['Cash Margin Média (' + j1 + ')', r=>this.fmtBRL(r.mg)],
+      ['Cash Margin Média (' + j7 + ')', r=>this.fmtBRL(r.mg7)],
+      ['Margem % (' + j1 + ')', r=>this.fmtPct(r.mb)],
+      ['Margem % (' + j7 + ')', r=>this.fmtPct(r.mb7)],
+      ['Média SKUs (' + j1 + ')', r=>this.fmtInt(Math.round(r.sk||0))],
+      ['Média SKUs (' + j7 + ')', r=>this.fmtInt(Math.round(r.sk7||0))],
+      ['Meses c/ Compra (' + j1 + ')', r=>this.fmtInt(Math.round(r.mc||0))],
+      ['Meses c/ Compra (' + j7 + ')', r=>this.fmtInt(Math.round(r.m7||0))]
     ];
+    this.downloadCsv(cols, rows, 'dashboard_segmentacao_' + (isOperacional ? 'operacional_' : ''));
+  }
+
+  exportTendencia(rows){
+    const cols = [
+      ['Cliente', t=>t.x.no],
+      ['ID Cliente', t=>t.x.id],
+      ['Coligada', t=>t.x.col],
+      ['CNPJ', t=>t.x.cnpj],
+      ['Vendedor', t=>t.x.vd],
+      ['Segmentação Oficial', t=>t.x.oficial],
+      ['Segmentação Projetada (hoje)', t=>t.x.projetado],
+      ['Direção', t=>t.x.direcao === 'up' ? 'Subindo' : 'Descendo'],
+      ['Motivo provável', t=>t.x.motivo],
+      ['Fat. Médio Oficial', t=>this.fmtBRL(t.x.r.fm)],
+      ['Fat. Médio Hoje', t=>this.fmtBRL(t.x.op.fm)],
+      ['Cash Margin Média Oficial', t=>this.fmtBRL(t.x.r.mg)],
+      ['Cash Margin Média Hoje', t=>this.fmtBRL(t.x.op.mg)],
+      ['Margem % Oficial', t=>this.fmtPct(t.x.r.mb)],
+      ['Margem % Hoje', t=>this.fmtPct(t.x.op.mb)],
+      ['Média SKUs Oficial', t=>this.fmtInt(Math.round(t.x.r.sk||0))],
+      ['Média SKUs Hoje', t=>this.fmtInt(Math.round(t.x.op.sk||0))],
+      ['Meses c/ Compra Oficial', t=>this.fmtInt(Math.round(t.x.r.mc||0))],
+      ['Meses c/ Compra Hoje', t=>this.fmtInt(Math.round(t.x.op.mc||0))]
+    ];
+    this.downloadCsv(cols, rows, 'dashboard_tendencia_');
+  }
+
+  downloadCsv(cols, rows, prefix){
     const lines = [
       cols.map(c=>this.csvCell(c[0])).join(';'),
       ...rows.map(r=>cols.map(c=>this.csvCell(c[1](r))).join(';'))
@@ -1327,7 +1369,7 @@ class Component extends DCLogic {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'dashboard_segmentacao_'+this.exportDate()+'.csv';
+    a.download = prefix + this.exportDate() + '.csv';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -1781,7 +1823,7 @@ class Component extends DCLogic {
       projetadoBg:this.BG[x.projetado], projetadoTxt:this.TXT[x.projetado], projetado:x.projetado,
       setaIcon: x.direcao==='up' ? '▲' : '▼',
       setaColor: x.direcao==='up' ? '#2F7A56' : '#9C4A3A',
-      motivo:x.motivo,
+      motivo:x.motivo, x,
       fmOficialFmt:this.fmtBRL(x.fmOficial), fmOperacionalFmt:this.fmtBRL(x.fmOperacional),
       openTrend: ()=> this.setState({trendRow: this.aplicarOperacional(x.r, x.op), dataMode:'operacional'})
     }));
