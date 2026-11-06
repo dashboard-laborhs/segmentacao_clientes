@@ -540,26 +540,58 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
       <section style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
-          <div style="font-size:11px;font-weight:800;color:#2F7A56;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes subindo</div>
-          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Quantidade de clientes na carteira mudando pra um segmento acima</div>
-          <sc-for list="{{ tTopGanhando }}" as="v" hint-placeholder-count="5">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-              <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
-              <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#8FCBAB"></div></div>
-              <div style="width:24px;text-align:right;color:#2F7A56;font-weight:700">{{ v.countFmt }}</div>
-            </div>
-          </sc-for>
+          <div style="font-size:11px;font-weight:800;color:#2F7A56;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloSobe }}</div>
+          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubSobe }}</div>
+          <sc-if value="{{ tRankingVendedores }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ tTopGanhando }}" as="v" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
+                <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
+                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#8FCBAB"></div></div>
+                <div style="width:24px;text-align:right;color:#2F7A56;font-weight:700">{{ v.countFmt }}</div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ tRankingClientes }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ tTopClientesSobe }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
+                <div style="flex:1;min-width:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
+                <div style="flex-shrink:0;color:#8A94AD;font-size:11px">{{ c.fmFmt }}</div>
+                <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.deBg }};color:{{ c.deTxt }}">{{ c.de }}</span>
+                <span style="flex-shrink:0;color:#2F7A56;font-weight:800">→</span>
+                <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.paraBg }};color:{{ c.paraTxt }}">{{ c.para }}</span>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ tVazioSobe }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#8A94AD;padding:6px 0">{{ tVazioSobeTxt }}</div>
+          </sc-if>
         </div>
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
-          <div style="font-size:11px;font-weight:800;color:#9C4A3A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes descendo</div>
-          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Quantidade de clientes na carteira mudando pra um segmento abaixo</div>
-          <sc-for list="{{ tTopPerdendo }}" as="v" hint-placeholder-count="5">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-              <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
-              <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#E0A99A"></div></div>
-              <div style="width:24px;text-align:right;color:#9C4A3A;font-weight:700">{{ v.countFmt }}</div>
-            </div>
-          </sc-for>
+          <div style="font-size:11px;font-weight:800;color:#9C4A3A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloDesce }}</div>
+          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubDesce }}</div>
+          <sc-if value="{{ tRankingVendedores }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ tTopPerdendo }}" as="v" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
+                <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
+                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#E0A99A"></div></div>
+                <div style="width:24px;text-align:right;color:#9C4A3A;font-weight:700">{{ v.countFmt }}</div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ tRankingClientes }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ tTopClientesDesce }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
+                <div style="flex:1;min-width:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
+                <div style="flex-shrink:0;color:#8A94AD;font-size:11px">{{ c.fmFmt }}</div>
+                <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.deBg }};color:{{ c.deTxt }}">{{ c.de }}</span>
+                <span style="flex-shrink:0;color:#9C4A3A;font-weight:800">→</span>
+                <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.paraBg }};color:{{ c.paraTxt }}">{{ c.para }}</span>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ tVazioDesce }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#8A94AD;padding:6px 0">{{ tVazioDesceTxt }}</div>
+          </sc-if>
         </div>
       </section>
 
@@ -1244,6 +1276,7 @@ class Component extends DCLogic {
       tDescendoBreakdown: tendencia ? tendencia.descendo.breakdown : [],
       tTopGanhando: tendencia ? tendencia.topGanhando : [],
       tTopPerdendo: tendencia ? tendencia.topPerdendo : [],
+      ...this.rankingTendenciaInfo(tendencia),
       vendCountLabel: this.fmtInt(criteriaImpactData.total),
       criteriaImpact: criteriaImpactData.list,
       sortVendVd: ()=>this.toggleVendSort('vd'),
@@ -1969,11 +2002,19 @@ class Component extends DCLogic {
     const topPerdendo = ranking.filter(v=>v.down>0).sort((a,b)=>b.down-a.down).slice(0,5)
       .map(v=>({ vd:v.vd, countFmt:this.fmtInt(v.down), w: Math.round((v.down/maxDown)*100)+'%' }));
 
+    // Perfil Vendedor: em vez do ranking de vendedores (seria so ele), os 5
+    // clientes de maior faturamento oficial mudando de segmento.
+    const topClientes = (dir)=> agrupado.filter(x=>x.direcao===dir)
+      .sort((a,b)=>(b.fmOficial||0)-(a.fmOficial||0)).slice(0,5)
+      .map(x=>({ no:x.no, fmFmt:this.fmtBRL(x.fmOficial), de:x.oficial, deBg:this.BG[x.oficial], deTxt:this.TXT[x.oficial],
+        para:x.projetado, paraBg:this.BG[x.projetado], paraTxt:this.TXT[x.projetado] }));
+
     return {
       rows, vendedores,
       subindo:{ total: agrupado.filter(x=>x.direcao==='up').length, breakdown: breakdown('up') },
       descendo:{ total: agrupado.filter(x=>x.direcao==='down').length, breakdown: breakdown('down') },
-      topGanhando, topPerdendo
+      topGanhando, topPerdendo,
+      topClientesSobe: topClientes('up'), topClientesDesce: topClientes('down')
     };
   }
 
@@ -2054,6 +2095,29 @@ class Component extends DCLogic {
     return { welcomeTitle: ola(''), welcomePre:'Você está na ', welcomeBold:'Visão Gestão', welcomePost:', com todas as carteiras: ' + nClientes + '.',
       welcomeHasNames:false, welcomeNames:[], visaoLabel:'Visão Gestão · todas as carteiras',
       faixaPerfil:'Gestão', faixaCor:'#001E51', faixaBg:'#e4e9f5', faixaBorda:'#d3dbec' };
+  }
+
+  // Cards de ranking da Tendencia ajustados ao perfil: Gestao ve o top 5 de
+  // vendedores, Adm. Vendas os vendedores do seu grupo e o Vendedor os seus
+  // maiores clientes mudando de segmento.
+  rankingTendenciaInfo(t){
+    const carteira = window.LABOR_DASH_CARTEIRA || '';
+    const vendedor = carteira.startsWith('vendedores/');
+    const grupo = carteira.startsWith('grupos/');
+    const sobe = t ? (vendedor ? t.topClientesSobe : t.topGanhando) : [];
+    const desce = t ? (vendedor ? t.topClientesDesce : t.topPerdendo) : [];
+    const quem = vendedor ? 'clientes' : 'vendedores';
+    return {
+      tRankingVendedores: !vendedor, tRankingClientes: vendedor,
+      tTopClientesSobe: t ? t.topClientesSobe : [], tTopClientesDesce: t ? t.topClientesDesce : [],
+      tTituloSobe: vendedor ? 'Seus maiores clientes subindo' : grupo ? 'Vendedores do seu grupo — mais clientes subindo' : 'Top 5 vendedores — mais clientes subindo',
+      tTituloDesce: vendedor ? 'Seus maiores clientes descendo' : grupo ? 'Vendedores do seu grupo — mais clientes descendo' : 'Top 5 vendedores — mais clientes descendo',
+      tSubSobe: vendedor ? 'Até 5 de maior faturamento mudando pra um segmento acima' : 'Quantidade de clientes na carteira mudando pra um segmento acima',
+      tSubDesce: vendedor ? 'Até 5 de maior faturamento mudando pra um segmento abaixo' : 'Quantidade de clientes na carteira mudando pra um segmento abaixo',
+      tVazioSobe: !sobe.length, tVazioDesce: !desce.length,
+      tVazioSobeTxt: 'Nenhum cliente subindo de segmento no momento.',
+      tVazioDesceTxt: 'Nenhum cliente descendo de segmento no momento.'
+    };
   }
 
   fecharFaixa(){ this.setState({showFaixa:false}); }
