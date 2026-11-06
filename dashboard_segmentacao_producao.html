@@ -554,7 +554,10 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <sc-if value="{{ tRankingClientes }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ tTopClientesSobe }}" as="c" hint-placeholder-count="5">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-                <div style="flex:1;min-width:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
+                  <sc-if value="{{ c.temFalta }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#9C4A3A;margin-top:1px;line-height:1.35">{{ c.falta }}</div></sc-if>
+                </div>
                 <div style="flex-shrink:0;color:#8A94AD;font-size:11px">{{ c.fmFmt }}</div>
                 <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.deBg }};color:{{ c.deTxt }}">{{ c.de }}</span>
                 <span style="flex-shrink:0;color:#2F7A56;font-weight:800">→</span>
@@ -581,7 +584,10 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <sc-if value="{{ tRankingClientes }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ tTopClientesDesce }}" as="c" hint-placeholder-count="5">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-                <div style="flex:1;min-width:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
+                  <sc-if value="{{ c.temFalta }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#9C4A3A;margin-top:1px;line-height:1.35">{{ c.falta }}</div></sc-if>
+                </div>
                 <div style="flex-shrink:0;color:#8A94AD;font-size:11px">{{ c.fmFmt }}</div>
                 <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.deBg }};color:{{ c.deTxt }}">{{ c.de }}</span>
                 <span style="flex-shrink:0;color:#9C4A3A;font-weight:800">→</span>
@@ -646,6 +652,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Vendedor</th>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:center;padding:13px 14px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Oficial → Projetado</th>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Motivo provável</th>
+                <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">O que falta p/ manter</th>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:right;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Faturamento (Oficial → Hoje)</th>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:center;padding:13px 8px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Evol.</th>
               </tr>
@@ -664,6 +671,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
                     <span style="display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:{{ r.projetadoBg }};color:{{ r.projetadoTxt }}">{{ r.projetado }}</span>
                   </td>
                   <td style="padding:11px 16px;white-space:nowrap;color:#4F5D78;font-size:12px">{{ r.motivo }}</td>
+                  <td style="padding:11px 16px;color:#9C4A3A;font-size:12px;min-width:220px;max-width:340px;line-height:1.4">{{ r.falta }}</td>
                   <td style="padding:11px 16px;white-space:nowrap;text-align:right;color:#0B1733;font-size:12px">{{ r.fmOficialFmt }} → {{ r.fmOperacionalFmt }}</td>
                   <td style="padding:11px 8px;white-space:nowrap;text-align:center">
                     <button onClick="{{ r.openTrend }}" title="Ver evolução do cliente" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#2850EF;border-radius:8px;padding:5px 8px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">finance_mode</span></button>
@@ -1508,7 +1516,8 @@ class Component extends DCLogic {
     ];
     const mudanca = [
       ['Segmentação Oficial', x=>x.oficial], ['Segmentação Projetada (hoje)', x=>x.projetado],
-      ['Direção', x=>x.direcao === 'up' ? 'Subindo' : 'Descendo'], ['Motivo provável', x=>x.motivo]
+      ['Direção', x=>x.direcao === 'up' ? 'Subindo' : 'Descendo'], ['Motivo provável', x=>x.motivo],
+      ['O que falta p/ manter o segmento', x=>x.falta || '']
     ];
     const colsCliente = [
       ['Cliente', x=>x.no], ['ID Cliente', x=>x.id], ['CNPJ', x=>x.cnpj], ['Coligada', x=>x.col],
@@ -1896,6 +1905,25 @@ class Component extends DCLogic {
     return impacted.length ? impacted.join(' + ') : 'Combinação de critérios';
   }
 
+  // "O que falta" para o cliente manter o segmento oficial, com os valores
+  // operacionais (janela ate hoje). Faturamento e margem operacionais sao a
+  // soma dos 12 meses dividida por 12 (medidas Fat_Operacional/Margem_Operacional),
+  // entao subir a media em X exige X * 12 a mais no mes corrente. SKUs e a media
+  // de SKUs por nota; meses c/ compra conta meses distintos com nota.
+  oQueFalta(op, segmento){
+    const crit = this.DEFAULT_CRITERIA[segmento];
+    if(!crit || !op) return '';
+    const v = k => Number(op[k]) || 0;
+    const itens = [];
+    if(v('fm') < crit.fm) itens.push(this.fmtBRL((crit.fm - v('fm')) * 12) + ' de faturamento');
+    if(v('mg') < crit.mg) itens.push(this.fmtBRL((crit.mg - v('mg')) * 12) + ' de cash margin');
+    if(Math.round(v('sk')) < crit.sk) itens.push('média de ' + crit.sk + ' SKUs por nota (hoje ' + v('sk').toFixed(1).replace('.', ',') + ')');
+    const dm = crit.mc - Math.round(v('mc'));
+    if(dm === 1) itens.push('1 mês com compra (se ainda não comprou este mês)');
+    else if(dm > 1) itens.push(dm + ' meses com compra (não recupera neste mês)');
+    return itens.length ? 'Faltam ' + itens.join('; ') : '';
+  }
+
   tendenciaData(agrup){
     const officialRAW = window.LABOR_DASH?.RAW || [];
     const opInfo = window.LABOR_DASH_OPERACIONAL;
@@ -1917,6 +1945,7 @@ class Component extends DCLogic {
         oficial, projetado,
         direcao: pOrder > oOrder ? 'up' : 'down',
         motivo: this.motivoMudanca(r, op),
+        falta: pOrder < oOrder ? this.oQueFalta(op, oficial) : '',
         fmOficial:r.fm, fmOperacional:op.fm
       });
     });
@@ -1980,7 +2009,7 @@ class Component extends DCLogic {
       projetadoBg:this.BG[x.projetado], projetadoTxt:this.TXT[x.projetado], projetado:x.projetado,
       setaIcon: x.direcao==='up' ? '▲' : '▼',
       setaColor: x.direcao==='up' ? '#2F7A56' : '#9C4A3A',
-      motivo:x.motivo, x,
+      motivo:x.motivo, x, falta: x.falta || '—',
       fmOficialFmt:this.fmtBRL(x.fmOficial), fmOperacionalFmt:this.fmtBRL(x.fmOperacional),
       openTrend: ()=> this.setState({trendRow: this.aplicarOperacional(x.r, x.op), dataMode:'operacional'})
     }));
@@ -2006,7 +2035,7 @@ class Component extends DCLogic {
     // clientes de maior faturamento oficial mudando de segmento.
     const topClientes = (dir)=> agrupado.filter(x=>x.direcao===dir)
       .sort((a,b)=>(b.fmOficial||0)-(a.fmOficial||0)).slice(0,5)
-      .map(x=>({ no:x.no, fmFmt:this.fmtBRL(x.fmOficial), de:x.oficial, deBg:this.BG[x.oficial], deTxt:this.TXT[x.oficial],
+      .map(x=>({ no:x.no, falta:x.falta||'', temFalta:!!x.falta, fmFmt:this.fmtBRL(x.fmOficial), de:x.oficial, deBg:this.BG[x.oficial], deTxt:this.TXT[x.oficial],
         para:x.projetado, paraBg:this.BG[x.projetado], paraTxt:this.TXT[x.projetado] }));
 
     return {
