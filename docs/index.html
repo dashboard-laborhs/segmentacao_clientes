@@ -1892,15 +1892,22 @@ class Component extends DCLogic {
     return {list, total};
   }
 
-  motivoMudanca(r, op){
+  // Motivo da mudanca olhando so a regua que importa: descendo, os criterios
+  // abaixo do minimo do segmento oficial (o que derruba o cliente); subindo, os
+  // que passaram a atingir o minimo do segmento projetado. Antes considerava
+  // qualquer cruzamento de faixa (ex.: SKUs caindo da regua Platinum mesmo
+  // ainda atendendo Gold) e divergia da coluna "O que falta".
+  motivoMudanca(r, op, oficial, projetado){
     const fields = [['fm','Faturamento'], ['mg','Cash Margin'], ['sk','Média SKUs'], ['mc','Meses c/ compra']];
-    const impacted = fields.filter(([field])=>{
-      const v1 = field==='sk' ? Math.round(r[field]||0) : (r[field]||0);
-      const v2 = field==='sk' ? Math.round(op[field]||0) : (op[field]||0);
-      return ['DIAMOND','PLATINUM','GOLD'].some(level=>{
-        const min = this.criteriaValue(this.DEFAULT_CRITERIA[level]?.[field]);
-        return (v1 >= min) !== (v2 >= min);
-      });
+    const val = (o, f) => f==='sk' || f==='mc' ? Math.round(Number(o[f])||0) : (Number(o[f])||0);
+    const oOrder = this.ORDER[oficial] ?? 0, pOrder = this.ORDER[projetado] ?? 0;
+    const descendo = pOrder < oOrder;
+    const nivel = descendo ? oficial : projetado;
+    const crit = this.DEFAULT_CRITERIA[nivel];
+    if(!crit) return 'Combinação de critérios';
+    const impacted = fields.filter(([f])=>{
+      const min = this.criteriaValue(crit[f]);
+      return descendo ? val(op, f) < min : (val(r, f) < min && val(op, f) >= min);
     }).map(([,label])=>label);
     return impacted.length ? impacted.join(' + ') : 'Combinação de critérios';
   }
@@ -1921,7 +1928,7 @@ class Component extends DCLogic {
     const dm = crit.mc - Math.round(v('mc'));
     if(dm === 1) itens.push('1 mês com compra (se ainda não comprou este mês)');
     else if(dm > 1) itens.push(dm + ' meses com compra (não recupera neste mês)');
-    return itens.length ? 'Faltam ' + itens.join('; ') : '';
+    return itens.length ? (itens.length === 1 && /^1 mês/.test(itens[0]) ? 'Falta ' : 'Faltam ') + itens.join('; ') : '';
   }
 
   tendenciaData(agrup){
@@ -1944,7 +1951,7 @@ class Component extends DCLogic {
         r, op, id:r.id, no:r.no, vd:r.vd, col:r.col, cnpj:r.cnpj,
         oficial, projetado,
         direcao: pOrder > oOrder ? 'up' : 'down',
-        motivo: this.motivoMudanca(r, op),
+        motivo: this.motivoMudanca(r, op, oficial, projetado),
         falta: pOrder < oOrder ? this.oQueFalta(op, oficial) : '',
         fmOficial:r.fm, fmOperacional:op.fm
       });
