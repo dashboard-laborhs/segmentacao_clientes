@@ -101,8 +101,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <!-- Boas-vindas -->
     <sc-if value="{{ showFaixa }}" hint-placeholder-val="{{ true }}">
-      <section style="background:linear-gradient(90deg,#eef1fe 0%,#fff 55%);border:1px solid #dfe5fd;border-left:4px solid #2850EF;border-radius:16px;margin:-8px 0 24px;padding:16px 20px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 18px rgba(11,23,51,.04)">
+      <section style="background:linear-gradient(90deg,{{ faixaBg }} 0%,#fff 55%);border:1px solid {{ faixaBorda }};border-left:4px solid {{ faixaCor }};border-radius:16px;margin:-8px 0 24px;padding:16px 20px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 18px rgba(11,23,51,.04)">
         <div style="flex:1;min-width:0">
+          <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:{{ faixaCor }};margin-bottom:3px">{{ faixaPerfil }}</div>
           <div style="font-size:18px;font-weight:800;color:#0B1733">{{ welcomeTitle }}</div>
           <div style="font-size:13px;color:#4F5D78;margin-top:4px;line-height:1.45">{{ welcomePre }}<b>{{ welcomeBold }}</b>{{ welcomePost }}</div>
           <sc-if value="{{ welcomeHasNames }}" hint-placeholder-val="{{ false }}">
@@ -113,7 +114,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             </div>
           </sc-if>
         </div>
-        <button onClick="{{ startTour }}" style="font-family:inherit;font-size:12.5px;font-weight:700;border-radius:10px;padding:9px 14px;flex-shrink:0;cursor:pointer;border:1px solid #2850EF;background:#2850EF;color:#fff;white-space:nowrap">Fazer o tour</button>
+        <button onClick="{{ startTour }}" style="font-family:inherit;font-size:12.5px;font-weight:700;border-radius:10px;padding:9px 14px;flex-shrink:0;cursor:pointer;border:1px solid {{ faixaCor }};background:{{ faixaCor }};color:#fff;white-space:nowrap">Fazer o tour</button>
         <button onClick="{{ fecharFaixa }}" title="Fechar" style="font-family:inherit;font-size:16px;line-height:1;border-radius:10px;width:34px;height:34px;flex-shrink:0;cursor:pointer;border:1px solid #dde1ee;background:#fff;color:#6A748F">×</button>
       </section>
     </sc-if>
@@ -2041,15 +2042,18 @@ class Component extends DCLogic {
     if(carteira.startsWith('vendedores/')){
       const nome = meta.nome || (nomes.length === 1 ? nomes[0] : '');
       return { welcomeTitle: ola(meta.usuario || nome), welcomePre:'Esta é a ', welcomeBold:'sua carteira', welcomePost:': ' + nClientes + '.',
-        welcomeHasNames:false, welcomeNames:[], visaoLabel: nome ? 'Carteira: ' + nome : 'Sua carteira' };
+        welcomeHasNames:false, welcomeNames:[], visaoLabel: nome ? 'Carteira: ' + nome : 'Sua carteira',
+        faixaPerfil:'Vendedor', faixaCor:'#2850EF', faixaBg:'#eef1fe', faixaBorda:'#dfe5fd' };
     }
     if(carteira.startsWith('grupos/')){
       const nv = nomes.length + (nomes.length === 1 ? ' vendedor' : ' vendedores');
       return { welcomeTitle: ola(meta.usuario), welcomePre:'Esta é a visão do ', welcomeBold:'seu grupo', welcomePost:': ' + nv + ' e ' + nClientes + '.',
-        welcomeHasNames: nomes.length > 0, welcomeNames: nomes.map(nome=>({nome})), visaoLabel: (meta.usuario ? 'Grupo: ' + meta.usuario + ' · ' : 'Grupo · ') + nv };
+        welcomeHasNames: nomes.length > 0, welcomeNames: nomes.map(nome=>({nome})), visaoLabel: (meta.usuario ? 'Grupo: ' + meta.usuario + ' · ' : 'Grupo · ') + nv,
+        faixaPerfil:'Adm. Vendas', faixaCor:'#0E7C86', faixaBg:'#e3f3f4', faixaBorda:'#cbe7e9' };
     }
     return { welcomeTitle: ola(''), welcomePre:'Você está na ', welcomeBold:'Visão Gestão', welcomePost:', com todas as carteiras: ' + nClientes + '.',
-      welcomeHasNames:false, welcomeNames:[], visaoLabel:'Visão Gestão · todas as carteiras' };
+      welcomeHasNames:false, welcomeNames:[], visaoLabel:'Visão Gestão · todas as carteiras',
+      faixaPerfil:'Gestão', faixaCor:'#001E51', faixaBg:'#e4e9f5', faixaBorda:'#d3dbec' };
   }
 
   fecharFaixa(){ this.setState({showFaixa:false}); }
