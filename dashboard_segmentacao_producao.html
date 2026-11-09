@@ -180,7 +180,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <!-- Critérios por cluster (só em modo Oficial, com transição de altura ao trocar de modo) -->
     <div style="display:grid;grid-template-rows:{{ criteriosGridRows }};transition:grid-template-rows .35s ease,margin-bottom .35s ease;margin-bottom:{{ criteriosGridMargin }}">
-    <div style="overflow:hidden;min-height:0;opacity:{{ criteriosOpacity }};transition:opacity .2s ease">
+    <div style="overflow:{{ criteriosOverflow }};min-height:0;opacity:{{ criteriosOpacity }};transition:opacity .2s ease">
     <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:20px 22px">
       <div id="tour-criterios" class="lbr-expand-header" onClick="{{ toggleCriteriaCardsPanel }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:{{ criteriaCardsHeaderMargin }};padding:8px;margin-left:-8px;margin-right:-8px;margin-top:-8px;border-radius:12px">
         <div style="display:flex;align-items:center;gap:8px">
@@ -1224,8 +1224,8 @@ class Component extends DCLogic {
     // Explicacao de cada criterio (tooltip no bloco Criterios por segmento).
     const fim = ' Para entrar no segmento, o cliente precisa atingir todos os mínimos ao mesmo tempo.';
     const TIPS = {
-      'Faturamento Médio': 'Faturamento total da coligada (todas as lojas juntas) nos últimos 12 meses fechados, dividido por 12.' + fim,
-      'Cash Margin Média': 'Cash margin total da coligada (todas as lojas juntas) nos últimos 12 meses fechados, dividida por 12.' + fim,
+      'Faturamento Médio': 'Faturamento líquido total da coligada (todas as lojas juntas) nos últimos 12 meses fechados, dividido por 12.' + fim,
+      'Cash Margin Média': 'Margem em valor: faturamento líquido menos o custo dos itens vendidos. É o total da coligada (todas as lojas juntas) nos últimos 12 meses fechados, dividido por 12.' + fim,
       'Média SKUs': 'Média de itens (SKUs) diferentes por nota fiscal do cliente nos últimos 12 meses fechados. Na regra, o valor é arredondado (ex.: 4,6 conta como 5).' + fim,
       'Meses c/ compra': 'Em quantos dos últimos 12 meses fechados a coligada teve pelo menos uma nota fiscal.' + fim
     };
@@ -1388,6 +1388,7 @@ class Component extends DCLogic {
       criteriosGridRows: this.state.dataMode === 'oficial' ? '1fr' : '0fr',
       criteriosGridMargin: this.state.dataMode === 'oficial' ? '18px' : '0px',
       criteriosOpacity: this.state.dataMode === 'oficial' ? '1' : '0',
+      criteriosOverflow: this.state.dataMode === 'oficial' ? 'visible' : 'hidden',
       modoOperacionalAtivo: this.state.dataMode === 'operacional',
       toggleContainerBg: this.state.dataMode === 'operacional' ? '#FFFBEB' : '#fff',
       toggleContainerBorder: this.state.dataMode === 'operacional' ? '#F5DFA0' : '#e6e9f2',
