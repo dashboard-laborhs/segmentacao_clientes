@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;icon_names=finance_mode,help,arrow_back,arrow_forward,close,motion_play" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;icon_names=arrow_back,arrow_forward,chevron_right,close,expand_less,finance_mode,help,motion_play,trophy" />
 <script>
 window.LABOR_DASH_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r/sites/DashboardSegmentaoClientes/Shared%20Documents/labor-data.js?d=wee5043ccac7d4f72a7d23009f68748ca&csf=1&web=1&e=kcd93x';
 window.LABOR_DASH_SHAREPOINT_SITE_URL = 'https://bunzlbr.sharepoint.com/sites/DashboardSegmentaoClientes';
@@ -460,7 +460,10 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       <sc-for list="{{ vendSegCards }}" as="sc" hint-placeholder-count="3">
         <section style="background:#fff;border:1px solid #e6e9f2;border-top:4px solid {{ sc.cor }};border-radius:16px;padding:16px 18px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ sc.bg }};color:{{ sc.cor }}">{{ sc.label }}</span>
+            <span style="display:inline-flex;align-items:center;gap:8px">
+              <span style="width:30px;height:30px;border-radius:9px;background:{{ sc.bg }};color:{{ sc.cor }};display:inline-flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:19px">trophy</span></span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ sc.bg }};color:{{ sc.cor }}">{{ sc.label }}</span>
+            </span>
             <span style="font-size:12px;color:#8A94AD">{{ sc.totalLabel }}</span>
           </div>
           <div style="font-size:11.5px;color:#8A94AD;margin:6px 0 10px">Vendedores com mais clientes {{ sc.label }}</div>
@@ -468,16 +471,60 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             <div style="font-size:12.5px;color:#8A94AD;padding:6px 0">Nenhum cliente {{ sc.label }} hoje.</div>
           </sc-if>
           <sc-for list="{{ sc.top }}" as="t" hint-placeholder-count="3">
-            <div onClick="{{ t.onClick }}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #f1f3f9;cursor:pointer">
+            <div onClick="{{ t.onClick }}" title="Ver os clientes {{ sc.label }} deste vendedor" style="display:flex;align-items:center;gap:10px;padding:8px 6px;margin:0 -6px;border-top:1px solid #f1f3f9;cursor:pointer;border-radius:8px;background:{{ t.bg }}">
               <span style="width:20px;font-size:12px;font-weight:700;color:#8A94AD">{{ t.pos }}</span>
               <span style="flex:1;font-size:13px;font-weight:600;color:#0B1733;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.vd }}</span>
               <span style="font-size:13px;font-weight:700;color:{{ sc.cor }}">{{ t.qtd }}</span>
               <span style="width:92px;text-align:right;font-size:11.5px;color:#6A748F">{{ t.pct }}</span>
+              <span class="material-symbols-outlined" style="font-size:16px;color:#b9c0d4">{{ t.seta }}</span>
             </div>
           </sc-for>
         </section>
       </sc-for>
     </div>
+
+    <!-- Detalhe: clientes do vendedor no segmento -->
+    <sc-if value="{{ vendDetOpen }}" hint-placeholder-val="{{ false }}">
+    <section id="vend-detalhe" style="background:#fff;border:1px solid #e6e9f2;border-left:4px solid {{ vendDetCor }};border-radius:16px;overflow:hidden;margin-bottom:18px">
+      <div style="padding:14px 18px;border-bottom:1px solid #eceef5;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ vendDetBg }};color:{{ vendDetCor }}">{{ vendDetSeg }}</span>
+        <h3 style="font-size:15px;font-weight:700;margin:0;color:#0B1733">{{ vendDetVd }}</h3>
+        <span style="font-size:12px;color:#8A94AD">{{ vendDetCount }}</span>
+        <span style="margin-left:auto;display:flex;gap:8px">
+          <button onClick="{{ vendDetGeral }}" style="font-family:inherit;font-size:12px;font-weight:600;padding:6px 11px;border-radius:8px;border:1px solid #dde1ee;background:#fff;color:#2850EF;cursor:pointer">Abrir na Visão Geral</button>
+          <button onClick="{{ vendDetClose }}" title="Fechar" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#6A748F;border-radius:8px;padding:5px 7px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+        </span>
+      </div>
+      <div class="lbr-scroll" style="overflow-x:auto;max-height:420px;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap">
+          <thead>
+            <tr style="background:#fafbfe;border-bottom:1px solid #eceef5">
+              <th style="text-align:left;padding:10px 16px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Cliente</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Coligada</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Fat. médio</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Cash margin</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Média SKUs</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Meses c/ compra</th>
+              <th style="padding:10px 12px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ vendDetRows }}" as="d" hint-placeholder-count="4">
+              <tr style="border-bottom:1px solid #f1f3f9">
+                <td style="padding:10px 16px;color:#0B1733"><span style="font-weight:600">{{ d.no }}</span><span style="display:block;font-size:10.5px;color:#8A94AD">{{ d.id }}</span></td>
+                <td style="padding:10px 12px;color:#4F5D78">{{ d.col }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.fm }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.mg }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.sk }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.mc }}</td>
+                <td style="padding:10px 12px;text-align:center"><button onClick="{{ d.openTrend }}" title="Ver evolução do cliente" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#2850EF;border-radius:8px;padding:5px 8px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">finance_mode</span></button></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    </sc-if>
 
     <!-- Critério com mais impacto -->
     <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:20px 22px;margin-bottom:18px">
@@ -880,7 +927,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1340,&quot;height&quot;:900}}">
 class Component extends DCLogic {
-  state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'loja', tourActive:false, tourStep:0, showFaixa:false };
+  state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'loja', tourActive:false, tourStep:0, showFaixa:false, vendDet:null };
 
   // getter: a carteira (e se e Gestao) so e conhecida depois que os dados carregam
   get TOUR_STEPS(){ return [
@@ -1194,6 +1241,10 @@ class Component extends DCLogic {
     const isTendenciaView = this.state.view === 'tendencia';
     const criteriaImpactData = isVendedorView ? this.criteriaImpactData() : {list:[], total:0};
     const vendorRows = isVendedorView ? this.vendorRowsData(this.state.vendSortCol, this.state.vendSortDir) : [];
+    const det = isVendedorView ? this.state.vendDet : null;
+    const vendDetRaw = det ? (window.LABOR_DASH?.RAW || [])
+      .filter(r => (r.vd || '—') === det.vd && this.criterioPadrao(r) === det.seg)
+      .sort((a,b)=> (b.fm||0) - (a.fm||0)) : [];
     const vendCaret = (col)=> this.state.vendSortCol===col ? (this.state.vendSortDir<0?'↓':'↑') : '↕';
     const tendencia = isTendenciaView ? this.tendenciaData() : null;
 
@@ -1350,6 +1401,20 @@ class Component extends DCLogic {
       caretVendPctGold: vendCaret('pctGold'),
       caretVendPctFatGold: vendCaret('pctFatGold'),
       caretVendRisco: vendCaret('risco'),
+      vendDetOpen: !!det,
+      vendDetVd: det ? det.vd : '',
+      vendDetSeg: det ? det.seg.charAt(0) + det.seg.slice(1).toLowerCase() : '',
+      vendDetCor: det ? this.TXT[det.seg] : '#2850EF',
+      vendDetBg: det ? this.BG[det.seg] : '#eef1f7',
+      vendDetCount: det ? (vendDetRaw.length + (vendDetRaw.length === 1 ? ' cliente' : ' clientes')) : '',
+      vendDetRows: vendDetRaw.map(r=>({
+        no: r.no, id: r.id + (r.cnpj ? ' · ' + r.cnpj : ''), col: r.col || '—',
+        fm: this.fmtBRL(r.fm), mg: this.fmtBRL(r.mg),
+        sk: (Number(r.sk)||0).toFixed(1).replace('.', ','), mc: this.fmtInt(r.mc),
+        openTrend: ()=> this.setState({trendRow:r, dataMode:'oficial'})
+      })),
+      vendDetClose: ()=> this.setState({vendDet:null}),
+      vendDetGeral: ()=> det && this.setState({view:'geral', fVend:det.vd, fAtual:det.seg, dataMode:'oficial', vendDet:null, page:0}),
       vendSegCards: ['DIAMOND','PLATINUM','GOLD'].map(seg=>{
         const label = seg.charAt(0) + seg.slice(1).toLowerCase();
         const total = vendorRows.reduce((a,v)=>a + (v[seg]||0), 0);
@@ -1361,7 +1426,13 @@ class Component extends DCLogic {
             vd: v.vd,
             qtd: this.fmtInt(v[seg]),
             pct: this.fmtPct(v.total ? v[seg]*100/v.total : 0) + ' da carteira',
-            onClick: ()=> this.setState({view:'geral', fVend:v.vd, fAtual:seg, dataMode:'oficial', page:0})
+            bg: (det && det.vd === v.vd && det.seg === seg) ? this.BG[seg] : 'transparent',
+            seta: (det && det.vd === v.vd && det.seg === seg) ? 'expand_less' : 'chevron_right',
+            onClick: ()=> {
+              const aberto = det && det.vd === v.vd && det.seg === seg;
+              this.setState({vendDet: aberto ? null : {vd:v.vd, seg}});
+              if(!aberto) setTimeout(()=>{ const el = document.getElementById('vend-detalhe'); if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
+            }
           }));
         return {
           label, cor: this.TXT[seg], bg: this.BG[seg],
