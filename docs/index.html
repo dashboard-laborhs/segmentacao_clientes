@@ -538,6 +538,40 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       </sc-for>
     </div>
 
+    <!-- Top vendedores: clientes que subiram / cairam -->
+    <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
+        <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
+          <div style="font-size:11px;font-weight:800;color:#128067;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes subindo</div>
+          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que subiram de segmento (Anterior → Atual) e o critério que puxou</div>
+          <sc-if value="{{ vendMov.upVazio }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8A94AD">Nenhum cliente subiu de segmento.</div></sc-if>
+          <sc-for list="{{ vendMov.up }}" as="m" hint-placeholder-count="5">
+            <div style="margin-bottom:10px;font-size:12px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+                <span style="color:#0B1733;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.vd }}</span>
+                <span style="color:#128067;font-weight:700;font-size:11.5px">{{ m.countFmt }}</span>
+              </div>
+              <div style="margin-top:4px;background:#eef0f7;border-radius:3px;height:4px;overflow:hidden"><div style="height:100%;width:{{ m.w }};background:#A6DCCB;animation:lbrbar .6s ease"></div></div>
+              <div style="font-size:10.5px;color:#8A94AD;margin-top:3px">{{ m.crit }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
+          <div style="font-size:11px;font-weight:800;color:#C94848;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes caindo</div>
+          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que caíram de segmento (Anterior → Atual) e o critério que puxou</div>
+          <sc-if value="{{ vendMov.downVazio }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8A94AD">Nenhum cliente caiu de segmento.</div></sc-if>
+          <sc-for list="{{ vendMov.down }}" as="m" hint-placeholder-count="5">
+            <div style="margin-bottom:10px;font-size:12px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+                <span style="color:#0B1733;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.vd }}</span>
+                <span style="color:#C94848;font-weight:700;font-size:11.5px">{{ m.countFmt }}</span>
+              </div>
+              <div style="margin-top:4px;background:#eef0f7;border-radius:3px;height:4px;overflow:hidden"><div style="height:100%;width:{{ m.w }};background:#F5BDBD;animation:lbrbar .6s ease"></div></div>
+              <div style="font-size:10.5px;color:#8A94AD;margin-top:3px">{{ m.crit }}</div>
+            </div>
+          </sc-for>
+        </div>
+    </section>
+
     <!-- Detalhe: clientes do vendedor no segmento -->
     <sc-if value="{{ vendDetOpenTop }}" hint-placeholder-val="{{ false }}">
     <section id="vend-detalhe-top" style="background:#fff;border:1px solid #e6e9f2;border-left:4px solid {{ vendDetCor }};border-radius:16px;overflow:hidden;margin-bottom:18px">
@@ -1388,6 +1422,7 @@ class Component extends DCLogic {
     const criteriaImpactData = (!isVendedorView && !isTendenciaView) ? this.criteriaImpactData() : {list:[], total:0};
     const vendorRows = isVendedorView ? this.vendorRowsData(this.state.vendSortCol, this.state.vendSortDir) : [];
     const det = isVendedorView ? this.state.vendDet : null;
+    const vendMov = isVendedorView ? this.vendMovData() : {up:[],down:[],upVazio:true,downVazio:true};
     const vendDetRaw = det ? this.agruparPorVendedor(window.LABOR_DASH?.RAW || [])
       .filter(r => (r.vd || '—') === det.vd && (!det.seg || this.criterioPadrao(r) === det.seg))
       .sort((a,b)=> ((this.ORDER[this.criterioPadrao(b)]||0) - (this.ORDER[this.criterioPadrao(a)]||0)) || ((b.fm||0) - (a.fm||0))) : [];
@@ -1569,6 +1604,7 @@ class Component extends DCLogic {
       })),
       vendDetClose: ()=> this.setState({vendDet:null}),
       vendDetGeral: ()=> det && this.setState({view:'geral', fVend:det.vd, fAtual:det.seg || '', dataMode:'oficial', vendDet:null, page:0}),
+      vendMov: vendMov,
       vendSegCards: ['DIAMOND','PLATINUM','GOLD'].map(seg=>{
         const label = seg.charAt(0) + seg.slice(1).toLowerCase();
         const total = vendorRows.reduce((a,v)=>a + (v[seg]||0), 0);
@@ -2193,6 +2229,32 @@ class Component extends DCLogic {
     // ficam sempre no fim, separadas.
     const esp = rows.filter(r=>this.carteiraEspecial(r.vd));
     return rows.filter(r=>!this.carteiraEspecial(r.vd)).concat(esp);
+  }
+
+  // Visao por Vendedor: top vendedores com mais clientes que subiram/cairam
+  // (oficial, Anterior -> Atual), com o criterio que puxou a mudanca.
+  vendMovData(){
+    const labels = {fm:'Faturamento', mg:'Cash Margin', sk:'Média SKUs', mc:'Meses c/ compra'};
+    const by = {up:{}, down:{}};
+    this.agruparPorVendedor(window.LABOR_DASH?.RAW || []).forEach(r=>{
+      const vd = r.vd || '—';
+      if(this.carteiraEspecial(vd)) return;
+      const dir = this.windowDirection(r);
+      if(dir !== 'up' && dir !== 'down') return;
+      const b = by[dir][vd] = by[dir][vd] || {vd, n:0, crit:{fm:0,mg:0,sk:0,mc:0}};
+      b.n++;
+      this.windowChangeReasons(r).forEach(k=>{ b.crit[k]++; });
+    });
+    const top = (obj)=>{
+      const arr = Object.values(obj).sort((a,b)=> b.n - a.n || a.vd.localeCompare(b.vd)).slice(0,5);
+      const max = Math.max(1, ...arr.map(x=>x.n));
+      return arr.map(x=>({
+        vd: x.vd, countFmt: this.fmtInt(x.n), w: (x.n/max*100).toFixed(1)+'%',
+        crit: ['fm','mg','mc','sk'].filter(k=>x.crit[k]).sort((a,b)=>x.crit[b]-x.crit[a]).map(k=>labels[k]+' '+x.crit[k]).join(' · ')
+      }));
+    };
+    const up = top(by.up), down = top(by.down);
+    return {up, down, upVazio: !up.length, downVazio: !down.length};
   }
 
   carteiraEspecial(vd){
