@@ -1194,6 +1194,25 @@ class Component extends DCLogic {
     return semColigada.concat(agrupados);
   }
 
+  // Visao por Vendedor: no modo "Por coligada", cada coligada conta uma vez
+  // por vendedor (lojas da mesma coligada com vendedores diferentes continuam
+  // contando na carteira de cada um).
+  agruparPorVendedor(rows){
+    if(this.state.agrupamento !== 'coligada') return rows;
+    const grupos = {}, out = [];
+    rows.forEach(r=>{
+      if(!r.col){ out.push(r); return; }
+      const k = (r.vd || '—') + '|' + r.col;
+      if(!grupos[k]){ grupos[k] = {base:r, n:0}; out.push(grupos[k]); }
+      grupos[k].n++;
+    });
+    return out.map(x=>{
+      if(!x.base) return x;
+      const extra = x.n - 1;
+      return extra > 0 ? Object.assign({}, x.base, {no: x.base.no + ' (+' + extra + ' cliente' + (extra > 1 ? 's' : '') + ')'}) : x.base;
+    });
+  }
+
   filteredSorted(){
     const s = this.state;
     let rows = this.agruparRows(this.data.RAW).filter(r=>this.matchesFilters(r, s, true));
@@ -1365,7 +1384,7 @@ class Component extends DCLogic {
     const criteriaImpactData = (!isVendedorView && !isTendenciaView) ? this.criteriaImpactData() : {list:[], total:0};
     const vendorRows = isVendedorView ? this.vendorRowsData(this.state.vendSortCol, this.state.vendSortDir) : [];
     const det = isVendedorView ? this.state.vendDet : null;
-    const vendDetRaw = det ? (window.LABOR_DASH?.RAW || [])
+    const vendDetRaw = det ? this.agruparPorVendedor(window.LABOR_DASH?.RAW || [])
       .filter(r => (r.vd || '—') === det.vd && (!det.seg || this.criterioPadrao(r) === det.seg))
       .sort((a,b)=> ((this.ORDER[this.criterioPadrao(b)]||0) - (this.ORDER[this.criterioPadrao(a)]||0)) || ((b.fm||0) - (a.fm||0))) : [];
     const vendCaret = (col)=> this.state.vendSortCol===col ? (this.state.vendSortDir<0?'↓':'↑') : '↕';
@@ -2132,7 +2151,7 @@ class Component extends DCLogic {
     const byVend = {};
     // Sempre a visao oficial (J1 x J2), mesmo que o toggle da Visao Geral
     // esteja em Operacional.
-    (window.LABOR_DASH?.RAW || []).forEach(r=>{
+    this.agruparPorVendedor(window.LABOR_DASH?.RAW || []).forEach(r=>{
       const vd = r.vd || '—';
       if(!byVend[vd]) byVend[vd] = {vd, total:0, DIAMOND:0, PLATINUM:0, GOLD:0, STANDARD:0, up:0, down:0};
       const b = byVend[vd];
