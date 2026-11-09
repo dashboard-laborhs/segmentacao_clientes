@@ -98,9 +98,6 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         <p style="font-size:11.5px;margin:10px 0 0;color:{{ sourceColor }};font-weight:600">{{ sourceLabel }}</p>
       </div>
       <div class="lbr-header-right" style="display:flex;align-items:center;gap:18px;flex-shrink:0">
-        <button class="lbr-header-tour" onClick="{{ startTour }}" title="Fazer tour guiado do dashboard" style="font-family:inherit;font-size:12.5px;font-weight:700;color:#2850EF;background:#eef1fe;border:none;border-radius:10px;padding:9px 13px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">
-          <span class="material-symbols-outlined" style="font-size:17px">motion_play</span> Tour
-        </button>
         <div id="tour-total" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e6e9f2;border-radius:12px;padding:10px 16px;box-shadow:0 6px 18px rgba(11,23,51,.05)">
           <div style="text-align:right">
             <div style="font-size:10.5px;color:#6A748F;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">Base total</div>
@@ -149,6 +146,16 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </sc-if>
         <button id="tour-tendencia-btn" onClick="{{ goToTendencia }}" disabled="{{ modoOperacionalDisabled }}" style="font-family:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid {{ navTendenciaBorder }};background:{{ navTendenciaBg }};color:{{ navTendenciaTxt }};opacity:{{ modoOperacionalOpacity }}">Tendência das Mudanças</button>
       </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <sc-if value="{{ viewGeral }}" hint-placeholder-val="{{ true }}">
+        <div id="tour-toggle-modo" style="display:flex;align-items:center;gap:9px;background:{{ toggleContainerBg }};border:1px solid {{ toggleContainerBorder }};border-radius:12px;padding:8px 14px">
+          <span style="font-family:inherit;font-size:12.5px;font-weight:700;color:{{ oficialLabelColor }}">Oficial</span>
+          <button onClick="{{ toggleModo }}" disabled="{{ modoOperacionalDisabled }}" title="Alternar entre Oficial e Operacional" style="position:relative;width:42px;height:23px;border-radius:999px;border:none;cursor:pointer;background:{{ switchTrackBg }};padding:0;flex-shrink:0;opacity:{{ modoOperacionalOpacity }}">
+            <span style="position:absolute;top:2px;left:{{ switchThumbLeft }};width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(11,23,51,.3);transition:left .15s ease"></span>
+          </button>
+          <span style="font-family:inherit;font-size:12.5px;font-weight:700;color:{{ operacionalLabelColor }}">Operacional</span>
+        </div>
+      </sc-if>
       <div id="tour-agrupamento" style="display:flex;align-items:center;gap:9px;flex-shrink:0;background:#fff;border:1px solid #e6e9f2;border-radius:12px;padding:8px 14px">
         <span style="font-family:inherit;font-size:12.5px;font-weight:700;color:{{ porLojaLabelColor }}">Por cliente</span>
         <button onClick="{{ toggleAgrupamento }}" title="Alternar entre visão por cliente e por coligada" style="position:relative;width:42px;height:23px;border-radius:999px;border:none;cursor:pointer;background:{{ agrupamentoTrackBg }};padding:0;flex-shrink:0">
@@ -156,27 +163,17 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </button>
         <span style="font-family:inherit;font-size:12.5px;font-weight:700;color:{{ porColigadaLabelColor }}">Por coligada</span>
       </div>
+      </div>
     </nav>
 
     <sc-if value="{{ viewGeral }}" hint-placeholder-val="{{ true }}">
 
-    <!-- Toggle Oficial / Operacional -->
-    <section id="tour-toggle-modo" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:{{ toggleContainerBg }};border:1px solid {{ toggleContainerBorder }};border-radius:16px;padding:0 16px;height:50px;margin-bottom:18px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="display:flex;align-items:center;gap:9px">
-          <span style="font-family:inherit;font-size:12.5px;font-weight:700;color:{{ oficialLabelColor }}">Oficial</span>
-          <button onClick="{{ toggleModo }}" disabled="{{ modoOperacionalDisabled }}" title="Alternar entre Oficial e Operacional" style="position:relative;width:42px;height:23px;border-radius:999px;border:none;cursor:pointer;background:{{ switchTrackBg }};padding:0;flex-shrink:0;opacity:{{ modoOperacionalOpacity }}">
-            <span style="position:absolute;top:2px;left:{{ switchThumbLeft }};width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(11,23,51,.3);transition:left .15s ease"></span>
-          </button>
-          <span style="font-family:inherit;font-size:12.5px;font-weight:700;color:{{ operacionalLabelColor }}">Operacional</span>
-        </div>
-        <sc-if value="{{ modoOperacionalAtivo }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#8A5A00;background:#FFF6E0;border:1px solid #F5DFA0;border-radius:8px;padding:6px 10px">
+    <sc-if value="{{ modoOperacionalAtivo }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#8A5A00;background:#FFF6E0;border:1px solid #F5DFA0;border-radius:8px;padding:6px 10px">
             <span style="font-weight:700">Prévia:</span> mostrando como ficaria a segmentação se o mês fechasse hoje. Não é o dado oficial — pode mudar até o fechamento.
-          </div>
-        </sc-if>
-      </div>
-    </section>
+          </div></div>
+    </sc-if>
+
 
     <!-- Critérios por cluster (só em modo Oficial, com transição de altura ao trocar de modo) -->
     <div style="display:grid;grid-template-rows:{{ criteriosGridRows }};transition:grid-template-rows .35s ease,margin-bottom .35s ease;margin-bottom:{{ criteriosGridMargin }}">
@@ -386,7 +383,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             <div style="font-size:11px;font-weight:800;color:#0B1733;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Legenda das janelas</div>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px 10px">
               <sc-for list="{{ windowLegendAsc }}" as="w" hint-placeholder-count="7">
-                <div style="font-size:11px;color:#6A748F;line-height:1.2"><span style="color:#0B1733;font-weight:800">{{ w.short }}</span>: {{ w.period }}</div>
+                <div style="font-size:11px;color:#6A748F;line-height:1.2"><span style="color:#0B1733;font-weight:800">{{ w.nome }}</span>: {{ w.period }}</div>
               </sc-for>
             </div>
           </div>
@@ -895,7 +892,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
                 <div>
                   <div style="font-size:12px;font-weight:800;color:#0B1733">Evolução da segmentação</div>
-                  <div style="font-size:11px;color:#8A94AD;margin-top:2px">Critério da simulação atual · histórico J7 a J1</div>
+                  <div style="font-size:11px;color:#8A94AD;margin-top:2px">Critério da simulação atual · histórico dos últimos 7 fechamentos</div>
                 </div>
               </div>
               <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
@@ -909,7 +906,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <div style="margin-top:10px;padding-top:10px;border-top:1px solid #eceef5;display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
                 <sc-for list="{{ windowLegend }}" as="w" hint-placeholder-count="7">
                   <div style="text-align:center;min-width:0;font-size:10px;line-height:1.2;color:#6A748F;background:{{ w.bg }};border:{{ w.border }};border-radius:8px;padding:4px 3px">
-                    <div style="font-weight:800;color:#0B1733">{{ w.short }}</div>
+                    <div style="font-weight:800;color:#0B1733">{{ w.nome }}</div>
                     <div>{{ w.period }}</div>
                   </div>
                 </sc-for>
@@ -1219,8 +1216,8 @@ class Component extends DCLogic {
     const isOperacional = this.state.dataMode === 'operacional';
     const j1Period = isOperacional ? this.operacionalPeriod() : (windows.find(w => w.short === 'J1')?.period || '');
     const j2Period = isOperacional ? (windowsOficiais.find(w => w.short === 'J1')?.period || '') : (windows.find(w => w.short === 'J2')?.period || '');
-    const j1Label = isOperacional ? 'Hoje (prévia)' : 'J1 - Atual';
-    const j2Label = isOperacional ? 'Último fechado' : 'J2 - Anterior';
+    const j1Label = isOperacional ? 'Hoje (prévia)' : 'Atual';
+    const j2Label = isOperacional ? 'Último fechado' : 'Anterior';
     // Explicacao de cada criterio (tooltip no bloco Criterios por segmento).
     const fim = ' Para entrar no segmento, o cliente precisa atingir todos os mínimos ao mesmo tempo.';
     const TIPS = {
@@ -1256,7 +1253,7 @@ class Component extends DCLogic {
         auto, atual, autoNoSku, j2, trendMeaningful,
         chegaram, sairam,
         flowLabel: this.fmtInt(chegaram) + ' chegaram · ' + this.fmtInt(sairam) + ' saíram',
-        deltaLabel: this.deltaLabel(atual, j2, isOperacional ? 'último fechado' : 'J2'),
+        deltaLabel: this.deltaLabel(atual, j2, isOperacional ? 'último fechado' : 'anterior'),
         deltaColor: this.deltaColor(atual, j2),
         j1Period,
         j2Period,
@@ -1410,8 +1407,8 @@ class Component extends DCLogic {
       agrupamentoTrackBg: this.state.agrupamento === 'coligada' ? '#2850EF' : '#dde1ee',
       agrupamentoThumbLeft: this.state.agrupamento === 'coligada' ? '21px' : '2px',
       toggleAgrupamento: ()=> this.setState({agrupamento: this.state.agrupamento === 'coligada' ? 'loja' : 'coligada', page:0}),
-      j1VsJ2Label: this.state.dataMode === 'operacional' ? 'Hoje vs último fechado' : 'J1 vs J2',
-      direcaoLabel: this.state.dataMode === 'operacional' ? 'Último fechado → Hoje' : 'J2 → J1',
+      j1VsJ2Label: this.state.dataMode === 'operacional' ? 'Hoje vs último fechado' : 'Atual vs anterior',
+      direcaoLabel: this.state.dataMode === 'operacional' ? 'Último fechado → Hoje' : 'Anterior → Atual',
       criteriaOpen: this.state.criteriaOpen,
       criteriaToggleLabel: this.state.criteriaOpen ? 'Recolher' : 'Expandir',
       criteriaBodyMargin: this.state.criteriaOpen ? '10px' : '0',
@@ -1793,7 +1790,7 @@ class Component extends DCLogic {
     if(!ref) return '▲ sem base ' + label;
     const pct = ((base-ref)/ref)*100;
     if(Math.abs(pct)<0.05) return '— 0,0% vs ' + label;
-    return (pct>0?'▲ ':'▼ ') + Math.abs(pct).toFixed(1).replace('.', ',') + '% ' + (pct>0?'acima':'abaixo') + ' de ' + label;
+    return (pct>0?'▲ ':'▼ ') + Math.abs(pct).toFixed(1).replace('.', ',') + '% ' + (pct>0?'acima':'abaixo') + ((label === 'anterior' || label === 'último fechado') ? ' do ' : ' de ') + label;
   }
 
   deltaColor(base, ref){
@@ -1862,7 +1859,7 @@ class Component extends DCLogic {
       const n = 7 - i;
       if(isOperacional && n === 1){
         return {
-          short:'J1', label:'Hoje (prévia)', period: this.operacionalPeriod(),
+          short:'J1', nome:'Hoje', label:'Hoje (prévia)', period: this.operacionalPeriod(),
           isPrevia:true, bg:'#FFF6E0', border:'1px solid #E8A400'
         };
       }
@@ -1874,6 +1871,7 @@ class Component extends DCLogic {
       const end = new Date(base.getFullYear(), base.getMonth() - offset + 1, 0);
       return {
         short:'J' + n,
+        nome: n === 1 ? 'Atual' : n === 2 ? 'Anterior' : (n - 1) + ' meses antes',
         label:'Janela ' + n,
         period:this.monthYear(start) + ' a ' + this.monthYear(end),
         isPrevia:false, bg:'transparent', border:'1px solid transparent'
@@ -1955,8 +1953,8 @@ class Component extends DCLogic {
       title, color, support:options.support || '', supportDisplay:options.support ? 'inline' : 'none', iconPaths:this.metricIcon(metric), ...this.metricRuleValues(metric, type), points, dots, values:valueLabels, valueList, labels, segments,
       grid1:'36,34 484,34',
       grid2:'36,86 484,86',
-      start:'J7: ' + this.formatMetric(first, type),
-      end:'J1: ' + this.formatMetric(last, type),
+      start:'6 meses antes: ' + this.formatMetric(first, type),
+      end:'Atual: ' + this.formatMetric(last, type),
       delta:this.metricDeltaLabel(last, previous),
       deltaColor:this.metricDeltaColor(last, previous)
     };
