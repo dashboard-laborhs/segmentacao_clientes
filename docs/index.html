@@ -78,6 +78,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     .lbr-stack{grid-template-columns:1fr!important}
     .lbr-two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
     .lbr-impacto{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .lbr-imp-h{white-space:normal!important}
     .lbr-fit-table{min-width:980px!important}
   }
 </style>
@@ -326,8 +327,8 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <!-- Critério com mais impacto -->
     <section id="tour-impacto" title="{{ direcaoLabel }} · um cliente pode mudar por mais de um critério" style="background:#fff;border:1px solid #e6e9f2;border-radius:14px;padding:9px 18px;margin-bottom:18px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
-      <div style="flex:0 0 260px;min-width:220px">
-        <h3 style="font-size:12px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critério com mais impacto</h3>
+      <div style="flex:0 0 auto;min-width:220px">
+        <h3 class="lbr-imp-h" style="white-space:nowrap;font-size:12px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critério com mais impacto <span style="text-transform:none;letter-spacing:0;font-size:11px;font-weight:600;color:#8A94AD">({{ impactoRef }})</span></h3>
         <div style="display:flex;align-items:baseline;gap:8px;margin-top:3px">
           <span style="font-size:22px;font-weight:800;line-height:1;color:#0B1733">{{ vendCountLabel }}</span>
           <span style="font-size:12px;color:#6A748F;font-weight:600">clientes mudaram de segmento</span>
@@ -1452,6 +1453,7 @@ class Component extends DCLogic {
       agrupamentoThumbLeft: this.state.agrupamento === 'coligada' ? '21px' : '2px',
       toggleAgrupamento: ()=> this.setState({agrupamento: this.state.agrupamento === 'coligada' ? 'loja' : 'coligada', page:0}),
       j1VsJ2Label: this.state.dataMode === 'operacional' ? 'Hoje vs último fechado' : 'Atual vs anterior',
+      impactoRef: this.state.dataMode === 'operacional' ? 'em relação ao último fechado' : 'em relação ao período anterior',
       direcaoLabel: this.state.dataMode === 'operacional' ? 'Último fechado → Hoje' : 'Anterior → Atual',
       criteriaOpen: this.state.criteriaOpen,
       criteriaToggleLabel: this.state.criteriaOpen ? 'Recolher' : 'Expandir',
