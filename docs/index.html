@@ -716,10 +716,12 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubSobe }}</div>
           <sc-if value="{{ tRankingVendedores }}" hint-placeholder-val="{{ true }}">
             <sc-for list="{{ tTopGanhando }}" as="v" hint-placeholder-count="5">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-                <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
-                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#8ED6C2"></div></div>
-                <div style="width:24px;text-align:right;color:#128067;font-weight:700">{{ v.countFmt }}</div>
+              <div style="margin-bottom:10px;font-size:12px">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+                  <span style="color:#0B1733;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</span>
+                  <span style="color:#128067;font-weight:700;font-size:11.5px">{{ v.countFmt }}</span>
+                </div>
+                <div style="margin-top:4px;background:#eef0f7;border-radius:3px;height:4px;overflow:hidden"><div style="height:100%;width:{{ v.w }};background:#A6DCCB;animation:lbrbar .6s ease"></div></div>
               </div>
             </sc-for>
           </sc-if>
@@ -746,10 +748,12 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubDesce }}</div>
           <sc-if value="{{ tRankingVendedores }}" hint-placeholder-val="{{ true }}">
             <sc-for list="{{ tTopPerdendo }}" as="v" hint-placeholder-count="5">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-                <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
-                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#F3A9A9"></div></div>
-                <div style="width:24px;text-align:right;color:#C94848;font-weight:700">{{ v.countFmt }}</div>
+              <div style="margin-bottom:10px;font-size:12px">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+                  <span style="color:#0B1733;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</span>
+                  <span style="color:#C94848;font-weight:700;font-size:11.5px">{{ v.countFmt }}</span>
+                </div>
+                <div style="margin-top:4px;background:#eef0f7;border-radius:3px;height:4px;overflow:hidden"><div style="height:100%;width:{{ v.w }};background:#F5BDBD;animation:lbrbar .6s ease"></div></div>
               </div>
             </sc-for>
           </sc-if>
