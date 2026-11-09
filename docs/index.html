@@ -77,6 +77,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     .lbr-faixa > button:first-of-type{margin-left:auto}
     .lbr-stack{grid-template-columns:1fr!important}
     .lbr-two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .lbr-impacto{grid-template-columns:repeat(2,minmax(0,1fr))!important}
     .lbr-fit-table{min-width:980px!important}
   }
 </style>
@@ -323,6 +324,25 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       </sc-for>
     </section>
 
+    <!-- Critério com mais impacto -->
+    <section id="tour-impacto" style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <div style="flex:0 0 250px;min-width:200px">
+        <h3 style="font-size:13.5px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critério com mais impacto</h3>
+        <div style="font-size:11.5px;color:#8A94AD;margin-top:3px;line-height:1.35">Entre os {{ vendCountLabel }} clientes que mudaram de segmento ({{ direcaoLabel }}), quantos mudaram por cada critério.</div>
+      </div>
+      <div class="lbr-impacto" style="flex:1;min-width:260px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px">
+        <sc-for list="{{ criteriaImpact }}" as="ci" hint-placeholder-count="4">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px">
+              <span style="font-size:12px;font-weight:700;color:#0B1733;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ci.label }}</span>
+              <span style="font-size:11.5px;color:#6A748F;white-space:nowrap"><b style="color:#0B1733">{{ ci.count }}</b> · {{ ci.pct }}</span>
+            </div>
+            <div style="margin-top:7px;background:#eef0f7;border-radius:4px;height:7px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ ci.pctW }};background:#2850EF;animation:lbrbar .6s ease"></div></div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
     <!-- Filtros -->
     <section id="tour-filtros" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 18px;margin-bottom:14px">
       <div style="flex:2;min-width:220px">
@@ -554,20 +574,6 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     </section>
     </sc-if>
 
-    <!-- Critério com mais impacto -->
-    <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:20px 22px;margin-bottom:18px">
-      <h3 style="font-size:16px;font-weight:700;margin:0 0 4px;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critério com mais impacto ({{ direcaoLabel }})</h3>
-      <div style="font-size:11.5px;color:#8A94AD;margin-bottom:16px">Entre os {{ vendCountLabel }} clientes que mudaram de segmento na última janela fechada, participação de cada critério na mudança.</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <sc-for list="{{ criteriaImpact }}" as="ci" hint-placeholder-count="5">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div style="width:150px;flex-shrink:0;font-size:12.5px;font-weight:700;color:#0B1733">{{ ci.label }}</div>
-            <div style="flex:1;background:#eef0f7;border-radius:5px;height:12px;overflow:hidden"><div style="height:100%;border-radius:5px;width:{{ ci.pctW }};background:#2850EF"></div></div>
-            <div style="width:96px;flex-shrink:0;text-align:right;font-size:12.5px;font-weight:700;color:#0B1733">{{ ci.count }} · {{ ci.pct }}</div>
-          </div>
-        </sc-for>
-      </div>
-    </section>
 
     <!-- Vendedores -->
     <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden;margin-bottom:18px">
@@ -1347,7 +1353,7 @@ class Component extends DCLogic {
     const caret = (col)=> this.state.sortCol===col ? (this.state.sortDir<0?'↓':'↑') : '↕';
     const isVendedorView = this.state.view === 'vendedor';
     const isTendenciaView = this.state.view === 'tendencia';
-    const criteriaImpactData = isVendedorView ? this.criteriaImpactData() : {list:[], total:0};
+    const criteriaImpactData = (!isVendedorView && !isTendenciaView) ? this.criteriaImpactData() : {list:[], total:0};
     const vendorRows = isVendedorView ? this.vendorRowsData(this.state.vendSortCol, this.state.vendSortDir) : [];
     const det = isVendedorView ? this.state.vendDet : null;
     const vendDetRaw = det ? (window.LABOR_DASH?.RAW || [])
