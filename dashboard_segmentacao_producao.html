@@ -542,7 +542,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
           <div style="font-size:11px;font-weight:800;color:#128067;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes subindo</div>
-          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que subiram de segmento (Anterior → Atual) e o critério que puxou</div>
+          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que subiram de segmento (Anterior → Atual) e o critério que puxou · um cliente pode contar em mais de um critério</div>
           <sc-if value="{{ vendMov.upVazio }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8A94AD">Nenhum cliente subiu de segmento.</div></sc-if>
           <sc-for list="{{ vendMov.up }}" as="m" hint-placeholder-count="5">
             <div style="margin-bottom:10px;font-size:12px">
@@ -557,7 +557,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
           <div style="font-size:11px;font-weight:800;color:#C94848;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes caindo</div>
-          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que caíram de segmento (Anterior → Atual) e o critério que puxou</div>
+          <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que caíram de segmento (Anterior → Atual) e o critério que puxou · um cliente pode contar em mais de um critério</div>
           <sc-if value="{{ vendMov.downVazio }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8A94AD">Nenhum cliente caiu de segmento.</div></sc-if>
           <sc-for list="{{ vendMov.down }}" as="m" hint-placeholder-count="5">
             <div style="margin-bottom:10px;font-size:12px">
