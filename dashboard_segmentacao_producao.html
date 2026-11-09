@@ -574,7 +574,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <!-- Detalhe: clientes do vendedor no segmento -->
     <sc-if value="{{ vendDetOpenTop }}" hint-placeholder-val="{{ false }}">
-    <section id="vend-detalhe-top" style="background:#fff;border:1px solid #e6e9f2;border-left:4px solid {{ vendDetCor }};border-radius:16px;overflow:hidden;margin-bottom:18px">
+    <div style="position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px 16px">
+    <div onClick="{{ vendDetClose }}" style="position:absolute;inset:0;background:rgba(11,23,51,.45)"></div>
+    <section id="vend-detalhe-top" style="position:relative;width:min(980px,100%);max-height:calc(100vh - 48px);display:flex;flex-direction:column;background:#fff;border:1px solid #e6e9f2;border-top:4px solid {{ vendDetCor }};border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(11,23,51,.28)">
       <div style="padding:14px 18px;border-bottom:1px solid #eceef5;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ vendDetBg }};color:{{ vendDetCor }}">{{ vendDetSeg }}</span>
         <h3 style="font-size:15px;font-weight:700;margin:0;color:#0B1733">{{ vendDetVd }}</h3>
@@ -584,7 +586,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <button onClick="{{ vendDetClose }}" title="Fechar" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#6A748F;border-radius:8px;padding:5px 7px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
         </span>
       </div>
-      <div class="lbr-scroll" style="overflow-x:auto;max-height:420px;overflow-y:auto">
+      <div class="lbr-scroll" style="overflow-x:auto;overflow-y:auto;flex:1;min-height:0">
         <table style="width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap">
           <thead>
             <tr style="background:#fafbfe;border-bottom:1px solid #eceef5">
@@ -615,6 +617,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </table>
       </div>
     </section>
+    </div>
     </sc-if>
 
 
@@ -1586,8 +1589,8 @@ class Component extends DCLogic {
       sortVendPctFatGold: ()=>this.toggleVendSort('pctFatGold'),
       caretVendPctGold: vendCaret('pctGold'),
       caretVendPctFatGold: vendCaret('pctFatGold'),
-      vendDetOpenTop: !!(det && det.seg),
-      vendDetOpenBottom: !!(det && !det.seg),
+      vendDetOpenTop: !!det,
+      vendDetOpenBottom: false,
       vendDetShowSeg: !!(det && !det.seg),
       vendDetVd: det ? det.vd : '',
       vendDetSeg: det ? (det.seg ? det.seg.charAt(0) + det.seg.slice(1).toLowerCase() : 'Carteira') : '',
@@ -1621,7 +1624,6 @@ class Component extends DCLogic {
             onClick: ()=> {
               const aberto = det && det.vd === v.vd && det.seg === seg;
               this.setState({vendDet: aberto ? null : {vd:v.vd, seg}});
-              if(!aberto) setTimeout(()=>{ const el = document.getElementById('vend-detalhe-top'); if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
             }
           }));
         return {
@@ -1647,11 +1649,10 @@ class Component extends DCLogic {
         nomeCor: this.carteiraEspecial(v.vd) ? '#8A94AD' : '#0B1733',
         especial: this.carteiraEspecial(v.vd),
         sepBorder: (this.carteiraEspecial(v.vd) && i > 0 && !this.carteiraEspecial(vendorRows[i-1].vd)) ? '2px solid #dde1ee' : '0',
-        aberto: !!(det && det.vd === v.vd && !det.seg),
+        aberto: false,
         onClick: ()=> {
           const aberto = det && det.vd === v.vd && !det.seg;
           this.setState({vendDet: aberto ? null : {vd:v.vd, seg:null}});
-          if(!aberto) setTimeout(()=>{ const el = document.getElementById('vend-detalhe-bottom'); if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
         }
       })),
       q: this.state,
