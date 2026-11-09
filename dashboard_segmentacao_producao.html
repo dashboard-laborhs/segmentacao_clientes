@@ -511,7 +511,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     <sc-if value="{{ viewVendedor }}" hint-placeholder-val="{{ false }}">
 
     <!-- Concentracao por segmento -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:18px">
+    <div id="tour-vend-conc" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:18px">
       <sc-for list="{{ vendSegCards }}" as="sc" hint-placeholder-count="3">
         <section style="background:#fff;border:1px solid #e6e9f2;border-top:4px solid {{ sc.cor }};border-radius:16px;padding:16px 18px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
@@ -539,7 +539,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     </div>
 
     <!-- Top vendedores: clientes que subiram / cairam -->
-    <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
+    <section id="tour-vend-mov" class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
           <div style="font-size:11px;font-weight:800;color:#128067;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Top 5 vendedores — mais clientes subindo</div>
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">Clientes que subiram de segmento (Anterior → Atual) e o critério que puxou · um cliente pode contar em mais de um critério</div>
@@ -622,7 +622,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
 
     <!-- Vendedores -->
-    <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden;margin-bottom:18px">
+    <section id="tour-vend-tabela" style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden;margin-bottom:18px">
       <div style="padding:16px 18px;border-bottom:1px solid #eceef5;display:flex;align-items:center;justify-content:space-between">
         <h3 style="font-size:16px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Segmentação por vendedor</h3>
         <span style="font-size:12px;color:#8A94AD">Clique num vendedor para ver a carteira dele</span>
@@ -716,7 +716,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         <span style="font-weight:700">Prévia:</span> compara a classificação oficial de cada cliente com a projeção de hoje. Não é o dado oficial — pode mudar até o fechamento do mês.
       </div>
 
-      <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
+      <section id="tour-tend-resumo" class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1.5px solid #BDE6DA;border-radius:16px;padding:16px 17px">
           <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:#E3F5EF;color:#128067;letter-spacing:.03em">▲ SUBINDO</span>
           <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:#128067">{{ tSubindoTotal }}</div>
@@ -747,7 +747,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
       </section>
 
-      <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
+      <section id="tour-tend-top" class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
           <div style="font-size:11px;font-weight:800;color:#128067;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloSobe }}</div>
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubSobe }}</div>
@@ -814,7 +814,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
       </section>
 
-      <section style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 18px;margin-bottom:14px">
+      <section id="tour-tend-filtros" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 18px;margin-bottom:14px">
         <div style="flex:1;min-width:220px;position:relative">
           <label style="font-size:10.5px;color:#6A748F;display:block;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Buscar cliente</label>
           <input value="{{ tSearch }}" onInput="{{ onTSearch }}" placeholder="Nome, ID, CNPJ ou Coligada…" style="font-family:inherit;font-size:13px;padding:9px 12px;border-radius:9px;border:1px solid #dde1ee;background:#fff;color:#0B1733;width:100%;outline:none">
@@ -860,7 +860,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
       </section>
 
-      <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden">
+      <section id="tour-tend-tabela" style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden">
         <div class="lbr-scroll" style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;font-size:12.5px">
             <thead>
@@ -1059,21 +1059,36 @@ class Component extends DCLogic {
   state = { view:'geral', search:'', fAutoNoSku:'', fAtual:'', fDir:'', fReason:'', fVend:'', sortCol:'fm', sortDir:-1, vendSortCol:'total', vendSortDir:-1, page:0, sourceLabel:'Carregando fonte de dados...', sourceIsError:false, criteria:null, criteriaOpen:false, criteriaCardsOpen:false, trendRow:null, dashboardVisible:false, noAccess:false, dataMode:'oficial', operacionalReady:false, tSearch:'', tFDir:'', tFVend:'', tFMotivo:'', agrupamento:'loja', tourActive:false, tourStep:0, showFaixa:false, vendDet:null };
 
   // getter: a carteira (e se e Gestao) so e conhecida depois que os dados carregam
-  get TOUR_STEPS(){ return [
-    {target:'#tour-total', title:'Base de clientes', text:'Total de clientes ativos na base analisada. O número muda conforme o agrupamento escolhido (por cliente ou por Coligada).'},
-    {target:'#tour-nav', title:'Navegação', lines:[
-      {text:'Alterne entre a Visão Oficial e a Tendência das Mudanças:'},
-      {bold:'Visão Oficial:', text:' cards, tabela completa e filtros com a segmentação atual dos clientes (Últimos 12 meses fechados).'},
-      {bold:'Tendência das Mudanças:', text:' mostra quem está prestes a subir ou descer de segmento com o mês vigente em andamento.'}
-    ]},
-    {target:'#tour-agrupamento', title:'Por cliente ou por Coligada', text:'Por padrão, cada cliente aparece separado. Ative "Por coligada" para agrupar os clientes de uma mesma Coligada.'},
-    {target:'#tour-toggle-modo', title:'Oficial vs Operacional', text:'"Oficial" é o dado fechado do último mês. "Operacional" é uma prévia dinâmica, recalculada todo dia, mostrando como ficaria a segmentação se o mês fechasse hoje.'},
-    {target:'#tour-criterios', title:'Critérios por segmento', text:'Veja os critérios oficiais (Faturamento, Cash Margin, SKUs e Meses c/ compra) exigidos em cada segmento.'},
-    {target:'#tour-simulacao', title:'Simulação temporária', text:'Simule temporariamente novos valores de critério pra testar cenários — não afeta o dado oficial, e volta ao padrão ao atualizar a página.'},
-    {target:'#tour-cards', title:'Resumo por segmento', text:'Quantos clientes em cada segmento, e quantos subiram ou desceram desde a janela anterior.'},
-    {target:'#tour-filtros', title:'Busca e filtros', text:'Busque por nome, ID, CNPJ ou Coligada, e filtre por vendedor ou direção de mudança de segmento.'}
-
-  ].filter(s => !(window.LABOR_DASH_CARTEIRA && s.target === '#tour-simulacao')); }
+  get TOUR_STEPS(){
+    const carteira = String(window.LABOR_DASH_CARTEIRA || '');
+    const gestao = !carteira;
+    const vendedor = carteira.startsWith('vendedores/');
+    const oper = !!this.state.operacionalReady;
+    const suaBase = vendedor ? 'da sua carteira' : (gestao ? 'de todas as carteiras' : 'das carteiras do seu grupo');
+    const navLines = [{text:'Alterne entre as páginas do dashboard:'},
+      {bold:'Visão Oficial:', text:' segmentação oficial (últimos 12 meses fechados), com cards, critérios e a tabela de clientes.'}];
+    if(gestao) navLines.push({bold:'Visão por Vendedor:', text:' compara as carteiras dos vendedores, sempre com o dado oficial.'});
+    navLines.push({bold:'Tendência das Mudanças:', text:' prévia do mês em andamento, com quem está prestes a subir ou descer de segmento.'});
+    const steps = [
+      {view:'geral', target:'#tour-total', title:'Base de clientes', text:'Total de clientes ativos ' + suaBase + '. O número muda conforme o agrupamento (por cliente ou por coligada).'},
+      {view:'geral', target:'#tour-nav', title:'Páginas', lines: navLines},
+      {view:'geral', target:'#tour-toggle-modo', title:'Oficial ou Operacional', text:'"Oficial" é o dado fechado do último mês. "Operacional" é uma prévia recalculada todo dia, mostrando como ficaria a segmentação se o mês fechasse hoje.'},
+      {view:'geral', target:'#tour-agrupamento', title:'Por cliente ou por coligada', text:'Por padrão, cada cliente aparece separado. Ative "Por coligada" para contar cada coligada uma vez. Vale para todas as páginas.'},
+      {view:'geral', target:'#tour-criterios', title:'Critérios por segmento', text:'Faturamento, Cash Margin, Média de SKUs e Meses com compra exigidos em cada segmento. Passe o mouse no "!" para ver como cada um é calculado.'},
+      {view:'geral', target:'#tour-simulacao', title:'Simulação temporária', text:'Teste novos valores de critério. Não altera o dado oficial e volta ao padrão ao recarregar a página.', soGestao:true},
+      {view:'geral', target:'#tour-cards', title:'Resumo por segmento', text:'Clientes em cada segmento, a variação contra o período anterior e quem entrou ou saiu (subiu, caiu ou é novo).'},
+      {view:'geral', target:'#tour-impacto', title:'Critério com mais impacto', text:'Quantos clientes mudaram de segmento e qual critério mais pesou, separando quem subiu (▲) de quem caiu (▼).'},
+      {view:'geral', target:'#tour-filtros', title:'Busca e filtros', text: vendedor ? 'Busque por nome, ID, CNPJ ou coligada e filtre por segmento ou direção de mudança.' : 'Busque por nome, ID, CNPJ ou coligada e filtre por vendedor, segmento ou direção de mudança.'},
+      {view:'geral', target:'#tour-tabela', title:'Tabela de clientes', text:'Todos os clientes com seus indicadores. O ícone de gráfico no fim da linha abre a evolução do cliente nos últimos 7 fechamentos.'},
+      {view:'vendedor', target:'#tour-vend-conc', title:'Concentração por segmento', text:'Os vendedores com mais clientes Diamond, Platinum e Gold. Clique num nome para ver esses clientes.', soGestao:true},
+      {view:'vendedor', target:'#tour-vend-mov', title:'Quem subiu e quem caiu', text:'Vendedores com mais clientes subindo e caindo de segmento, e o critério que puxou cada mudança.', soGestao:true},
+      {view:'vendedor', target:'#tour-vend-tabela', title:'Segmentação por vendedor', text:'Resumo de cada carteira. Clique num vendedor para abrir a carteira dele. Inativo, Bloqueados e E-commerce ficam no fim, fora de carteira.', soGestao:true},
+      {view:'tendencia', target:'#tour-tend-resumo', title:'Prévia do mês', text:'Quantos clientes estão subindo ou descendo se o mês fechasse hoje, comparado ao último fechamento oficial.', soOper:true},
+      {view:'tendencia', target:'#tour-tend-top', title: vendedor ? 'Seus maiores clientes em movimento' : 'Vendedores em destaque', text: vendedor ? 'Os clientes de maior faturamento da sua carteira que estão subindo ou descendo na prévia, e o que falta para não cair.' : 'Vendedores com mais clientes subindo e descendo na prévia.', soOper:true},
+      {view:'tendencia', target:'#tour-tend-tabela', title:'O que falta para manter', text:'Cliente a cliente: segmento oficial, projeção de hoje, o motivo e quanto falta para não cair.', soOper:true}
+    ];
+    return steps.filter(s => (!s.soGestao || gestao) && (!s.soOper || oper));
+  }
 
   PER = 30;
   ORDER = {DIAMOND:4,PLATINUM:3,GOLD:2,STANDARD:1,'SEM SEGMENTAÇÃO':0};
@@ -1099,7 +1114,7 @@ class Component extends DCLogic {
   }
 
   endTour(){
-    this.setState({tourActive:false});
+    this.setState({tourActive:false, view:'geral'});
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
     window.removeEventListener('resize', this.tourResizeHandler);
@@ -1123,6 +1138,18 @@ class Component extends DCLogic {
   scrollToTourStep(idx){
     const step = this.TOUR_STEPS[idx];
     if(!step) return;
+    // Troca de pagina quando o passo e de outra aba e espera renderizar.
+    if(step.view && step.view !== this.state.view){
+      this.setState({view: step.view, vendDet:null, dataMode: step.view === 'geral' ? 'oficial' : this.state.dataMode},
+        ()=> { window.scrollTo({top:0, behavior:'instant'}); setTimeout(()=> this.scrollToTourStepNow(idx), 120); });
+      return;
+    }
+    this.scrollToTourStepNow(idx);
+  }
+
+  scrollToTourStepNow(idx){
+    const step = this.TOUR_STEPS[idx];
+    if(!step) return;
     const el = document.querySelector(step.target);
     if(!el){ this.setState({tourStep: idx}); return; }
     // Elementos mais altos que a tela (ex: a tabela inteira) devem alinhar
@@ -1130,6 +1157,8 @@ class Component extends DCLogic {
     const block = el.offsetHeight > window.innerHeight * 0.8 ? 'start' : 'center';
     el.scrollIntoView({behavior:'smooth', block});
     setTimeout(()=> this.setState({tourStep: idx}), 380);
+    // Recalcula o destaque quando a rolagem suave termina de fato.
+    setTimeout(()=> this.state.tourActive && this.forceUpdate(), 900);
   }
 
   tourRect(){
@@ -1452,10 +1481,13 @@ class Component extends DCLogic {
       const tooltipW = 320;
       const spaceBelow = window.innerHeight - (top + h);
       const showBelow = spaceBelow > 170;
+      // Sem espaco nem embaixo nem em cima (ex: tabela maior que a tela):
+      // a caixa fica dentro do destaque, no rodape da tela.
+      const showInside = !showBelow && top < 200;
       const ttLeftRaw = left + w/2 - tooltipW/2;
       const ttLeft = Math.max(16, Math.min(ttLeftRaw, window.innerWidth - tooltipW - 16));
       tourTooltipStyle = 'position:fixed;left:'+ttLeft+'px;width:'+tooltipW+'px;z-index:201;' +
-        (showBelow ? ('top:'+(top+h+14)+'px') : ('bottom:'+(window.innerHeight-top+14)+'px'));
+        (showBelow ? ('top:'+(top+h+14)+'px') : showInside ? ('bottom:24px;box-shadow:0 12px 40px rgba(11,23,51,.35)') : ('bottom:'+(window.innerHeight-top+14)+'px'));
     }
 
     return {
