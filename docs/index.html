@@ -63,17 +63,32 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
   .lbr-expand-header:hover{background:#F4F6FC;box-shadow:inset 0 0 0 1px #dde4f5}
   @keyframes lbrbar{from{width:0}}
   .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24}
+  @media (max-width:760px){
+    .lbr-root{padding:14px 12px 40px!important}
+    .lbr-header{flex-direction:column!important;align-items:stretch!important;gap:14px!important;padding:16px!important}
+    .lbr-h1{font-size:23px!important}
+    .lbr-header-right{justify-content:space-between!important;gap:10px!important}
+    .lbr-header-sep{display:none!important}
+    .lbr-header-logo{height:40px!important;width:86px!important}
+    .lbr-faixa{flex-wrap:wrap!important;padding:10px 10px 12px!important;gap:8px 10px!important}
+    .lbr-faixa-txt{order:5;flex-basis:100%!important;flex-wrap:wrap!important;gap:4px 8px!important}
+    .lbr-faixa-msg{white-space:normal!important}
+    .lbr-faixa > button:first-of-type{margin-left:auto}
+    .lbr-stack{grid-template-columns:1fr!important}
+    .lbr-two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .lbr-fit-table{min-width:980px!important}
+  }
 </style>
 </helmet>
-<div style="font-family:'Archivo',system-ui,sans-serif;background:#F4F5FA;min-height:100vh;color:#0B1733;padding:28px 32px 56px">
+<div class="lbr-root" style="font-family:'Archivo',system-ui,sans-serif;background:#F4F5FA;min-height:100vh;color:#0B1733;padding:28px 32px 56px">
   <div style="max-width:1280px;margin:0 auto">
 
   <sc-if value="{{ dashboardVisible }}" hint-placeholder-val="{{ true }}">
 
-    <header style="background:#fff;border:1px solid #e4e8f4;border-top:4px solid #2850EF;border-radius:16px;margin-bottom:24px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 10px 28px rgba(11,23,51,.06)">
+    <header class="lbr-header" style="background:#fff;border:1px solid #e4e8f4;border-top:4px solid #2850EF;border-radius:16px;margin-bottom:24px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 10px 28px rgba(11,23,51,.06)">
       <div style="min-width:0">
         <div style="font-size:10.5px;font-weight:800;color:#2850EF;text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px">Dashboard executivo</div>
-        <h1 style="font-size:30px;font-weight:800;letter-spacing:0;margin:0;line-height:1.05;color:#0B1733">Segmentação de clientes</h1>
+        <h1 class="lbr-h1" style="font-size:30px;font-weight:800;letter-spacing:0;margin:0;line-height:1.05;color:#0B1733">Segmentação de clientes</h1>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:11px">
           <span style="font-size:12px;font-weight:700;color:#4F5D78;background:#f3f5fb;border:1px solid #e4e8f4;border-radius:999px;padding:6px 10px">{{ analysisPeriodLabel }} · {{ analysisPeriod }}</span>
           <span style="font-size:12px;font-weight:700;color:#4F5D78;background:#f3f5fb;border:1px solid #e4e8f4;border-radius:999px;padding:6px 10px">Tipo de Cliente: Revenda</span>
@@ -81,8 +96,8 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
         <p style="font-size:11.5px;margin:10px 0 0;color:{{ sourceColor }};font-weight:600">{{ sourceLabel }}</p>
       </div>
-      <div style="display:flex;align-items:center;gap:18px;flex-shrink:0">
-        <button onClick="{{ startTour }}" title="Fazer tour guiado do dashboard" style="font-family:inherit;font-size:12.5px;font-weight:700;color:#2850EF;background:#eef1fe;border:none;border-radius:10px;padding:9px 13px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">
+      <div class="lbr-header-right" style="display:flex;align-items:center;gap:18px;flex-shrink:0">
+        <button class="lbr-header-tour" onClick="{{ startTour }}" title="Fazer tour guiado do dashboard" style="font-family:inherit;font-size:12.5px;font-weight:700;color:#2850EF;background:#eef1fe;border:none;border-radius:10px;padding:9px 13px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">
           <span class="material-symbols-outlined" style="font-size:17px">motion_play</span> Tour
         </button>
         <div id="tour-total" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e6e9f2;border-radius:12px;padding:10px 16px;box-shadow:0 6px 18px rgba(11,23,51,.05)">
@@ -94,23 +109,23 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
           </div>
         </div>
-        <div style="width:1px;height:52px;background:#dfe3ef"></div>
-        <img src="labor-logo.png" alt="Labor Health Supply" style="height:54px;width:116px;display:block;object-fit:contain">
+        <div class="lbr-header-sep" style="width:1px;height:52px;background:#dfe3ef"></div>
+        <img class="lbr-header-logo" src="labor-logo.png" alt="Labor Health Supply" style="height:54px;width:116px;display:block;object-fit:contain">
       </div>
     </header>
 
     <!-- Boas-vindas (faixa compacta, mesma altura para todos os perfis) -->
     <sc-if value="{{ showFaixa }}" hint-placeholder-val="{{ true }}">
-      <section style="position:relative;overflow:hidden;background:radial-gradient(circle at 100% 0%,{{ faixaTom2 }} 0%,transparent 45%),linear-gradient(100deg,{{ faixaTom }} 0%,#fff 70%);border:1px solid {{ faixaBorda }};border-radius:14px;margin:-8px 0 20px;padding:0 12px 0 10px;min-height:56px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(11,23,51,.05)">
+      <section class="lbr-faixa" style="position:relative;overflow:hidden;background:radial-gradient(circle at 100% 0%,{{ faixaTom2 }} 0%,transparent 45%),linear-gradient(100deg,{{ faixaTom }} 0%,#fff 70%);border:1px solid {{ faixaBorda }};border-radius:14px;margin:-8px 0 20px;padding:0 12px 0 10px;min-height:56px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(11,23,51,.05)">
         <div style="width:36px;height:36px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,{{ faixaCor }} 0%,{{ faixaCor2 }} 100%);box-shadow:0 4px 10px {{ faixaSombra }}">
           <sc-if value="{{ faixaIconGestao }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></sc-if>
           <sc-if value="{{ faixaIconAdm }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.3c2.4.1 4 1.7 4.5 4.2"/></svg></sc-if>
           <sc-if value="{{ faixaIconVend }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6"/></svg></sc-if>
         </div>
         <span style="flex-shrink:0;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:{{ faixaCor }};background:#fff;border:1px solid {{ faixaBorda }};border-radius:999px;padding:2px 9px">{{ faixaPerfil }}</span>
-        <div style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;overflow:hidden">
+        <div class="lbr-faixa-txt" style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;overflow:hidden">
           <span style="flex-shrink:0;font-size:15px;font-weight:800;color:#0B1733">{{ welcomeTitle }}</span>
-          <span title="{{ welcomeFull }}" style="min-width:0;font-size:13px;color:#4F5D78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ welcomePre }}<b style="color:{{ faixaCor }}">{{ welcomeBold }}</b>{{ welcomePost }}</span>
+          <span class="lbr-faixa-msg" title="{{ welcomeFull }}" style="min-width:0;font-size:13px;color:#4F5D78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ welcomePre }}<b style="color:{{ faixaCor }}">{{ welcomeBold }}</b>{{ welcomePost }}</span>
           <sc-if value="{{ welcomeHasNames }}" hint-placeholder-val="{{ false }}">
             <span title="{{ welcomeNamesAll }}" style="display:flex;gap:5px;flex-shrink:0">
               <sc-for list="{{ welcomeNamesShort }}" as="n" hint-placeholder-count="3">
@@ -180,7 +195,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       </div>
       <div style="display:grid;grid-template-rows:{{ criteriaCardsGridRows }};transition:grid-template-rows .3s ease">
       <div style="overflow:hidden;min-height:0;opacity:{{ criteriaCardsOpacity }};transition:opacity .18s ease">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      <div class="lbr-stack" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
         <sc-for list="{{ rules }}" as="r" hint-placeholder-count="5">
           <div style="border:1px solid {{ r.border }};border-radius:12px;padding:13px 14px;background:{{ r.bgsoft }}">
             <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:{{ r.bg }};color:{{ r.txt }};letter-spacing:.03em">{{ r.label }}</span>
@@ -218,7 +233,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
         <div style="display:grid;grid-template-rows:{{ criteriaGridRows }};transition:grid-template-rows .3s ease">
         <div style="overflow:hidden;min-height:0;opacity:{{ criteriaOpacity }};transition:opacity .18s ease">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          <div class="lbr-stack" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
             <sc-for list="{{ criteriaRows }}" as="c" hint-placeholder-count="3">
               <div style="border:1px solid #eceef5;border-radius:10px;padding:10px 12px;background:#fafbfe">
                 <span style="font-size:11px;font-weight:800;padding:3px 9px;border-radius:6px;display:inline-block;margin-bottom:9px;background:{{ c.bg }};color:{{ c.txt }};letter-spacing:.03em">{{ c.label }}</span>
@@ -250,7 +265,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     </div>
 
     <!-- Cards de resumo -->
-    <section id="tour-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+    <section id="tour-cards" class="lbr-two" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
       <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
         <div onClick="{{ c.onClick }}" style="{{ c.cardStyle }}">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -334,6 +349,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <option value="">Todos</option><option value="fm">Faturamento</option><option value="mg">Cash Margin</option><option value="sk">Média SKUs</option><option value="mc">Meses c/ compra</option><option value="multi">Mais de um critério</option>
         </select>
       </div>
+      <sc-if value="{{ mostraVendedor }}" hint-placeholder-val="{{ true }}">
       <div style="flex:1;min-width:150px">
         <label style="font-size:10.5px;color:#6A748F;display:block;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Vendedor</label>
         <select value="{{ q.fVend }}" onChange="{{ onFVend }}" style="font-family:inherit;font-size:13px;padding:9px 11px;border-radius:9px;border:1px solid #dde1ee;background:#fff;color:#0B1733;width:100%;outline:none;cursor:pointer">
@@ -341,6 +357,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <sc-for list="{{ vendedores }}" as="v" hint-placeholder-count="4"><option value="{{ v }}">{{ v }}</option></sc-for>
         </select>
       </div>
+      </sc-if>
     </section>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin:0 2px 10px">
@@ -568,8 +585,8 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           </thead>
           <tbody>
             <sc-for list="{{ vendorRows }}" as="v" hint-placeholder-count="8">
-              <tr onClick="{{ v.onClick }}" title="Ver a carteira deste vendedor" style="border-bottom:1px solid #f1f3f9;cursor:pointer;background:{{ v.rowBg }}">
-                <td style="padding:11px 16px;font-weight:600;color:#0B1733">{{ v.vd }}</td>
+              <tr onClick="{{ v.onClick }}" title="Ver a carteira deste vendedor" style="border-bottom:1px solid #f1f3f9;cursor:pointer;background:{{ v.rowBg }};border-top:{{ v.sepBorder }}">
+                <td style="padding:11px 16px;font-weight:600;color:{{ v.nomeCor }}">{{ v.vd }}<sc-if value="{{ v.especial }}" hint-placeholder-val="{{ false }}"><span style="margin-left:8px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8A94AD;background:#eef0f6;border-radius:999px;padding:2px 7px">fora de carteira</span></sc-if></td>
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.total }}</td>
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.diamond }}</td>
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.platinum }}</td>
@@ -640,7 +657,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         <span style="font-weight:700">Prévia:</span> compara a classificação oficial de cada cliente com a projeção de hoje. Não é o dado oficial — pode mudar até o fechamento do mês.
       </div>
 
-      <section style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
+      <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1.5px solid #bcdfcb;border-radius:16px;padding:16px 17px">
           <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:#e7f7ee;color:#2F7A56;letter-spacing:.03em">▲ SUBINDO</span>
           <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:#2F7A56">{{ tSubindoTotal }}</div>
@@ -671,7 +688,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
       </section>
 
-      <section style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
+      <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
           <div style="font-size:11px;font-weight:800;color:#2F7A56;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloSobe }}</div>
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubSobe }}</div>
@@ -758,6 +775,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             <option value="Combinação">Combinação de critérios</option>
           </select>
         </div>
+        <sc-if value="{{ mostraVendedor }}" hint-placeholder-val="{{ true }}">
         <div style="min-width:180px">
           <label style="font-size:10.5px;color:#6A748F;display:block;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Vendedor</label>
           <select value="{{ tFVend }}" onChange="{{ onTFVend }}" style="font-family:inherit;font-size:13px;padding:9px 11px;border-radius:9px;border:1px solid #dde1ee;background:#fff;color:#0B1733;width:100%;outline:none;cursor:pointer">
@@ -767,6 +785,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             </sc-for>
           </select>
         </div>
+        </sc-if>
         <div style="display:flex;align-items:center;gap:10px;padding-bottom:5px;margin-left:auto">
           <div style="font-size:12.5px;color:#6A748F">{{ tCountLabel }} clientes mudando</div>
           <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ true }}">
@@ -784,7 +803,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             <thead>
               <tr style="background:#fafbfe">
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Cliente</th>
-                <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Vendedor</th>
+<sc-if value="{{ mostraVendedor }}" hint-placeholder-val="{{ true }}"><th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Vendedor</th></sc-if>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:center;padding:13px 14px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Oficial → Projetado</th>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">Motivo provável</th>
                 <th style="font-size:10.5px;font-weight:700;color:#6A748F;text-align:left;padding:13px 16px;border-bottom:1px solid #eceef5;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em">O que falta p/ manter</th>
@@ -799,7 +818,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
                     <div style="font-weight:600;color:#0B1733">{{ r.no }}</div>
                     <div style="font-size:11px;color:#9aa3bd;margin-top:1px">{{ r.sub }}</div>
                   </td>
-                  <td style="padding:11px 16px;white-space:nowrap;color:#6A748F;font-size:12px">{{ r.vd }}</td>
+                  <sc-if value="{{ mostraVendedor }}" hint-placeholder-val="{{ true }}"><td style="padding:11px 16px;white-space:nowrap;color:#6A748F;font-size:12px">{{ r.vd }}</td></sc-if>
                   <td style="padding:11px 12px;white-space:nowrap;text-align:center">
                     <span style="display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:{{ r.oficialBg }};color:{{ r.oficialTxt }}">{{ r.oficial }}</span>
                     <span style="color:{{ r.setaColor }};font-weight:800;margin:0 3px">{{ r.setaIcon }}</span>
@@ -890,7 +909,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               </div>
             </div>
           </div>
-          <div style="padding:18px 18px 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px">
+          <div class="lbr-stack" style="padding:18px 18px 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px">
             <sc-for list="{{ trendCards }}" as="g" hint-placeholder-count="5">
               <div style="border:1px solid #eceef5;border-radius:12px;padding:16px;background:#fafbfe;min-width:0">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
@@ -1341,6 +1360,7 @@ class Component extends DCLogic {
       showFaixa: this.state.showFaixa,
       fecharFaixa: ()=> this.fecharFaixa(),
       ...this.welcomeInfo(),
+      mostraVendedor: !String(window.LABOR_DASH_CARTEIRA || '').startsWith('vendedores/'),
       totalFmt: this.fmtInt(totalOficial),
       sourceLabel: this.state.sourceLabel,
       sourceColor: this.state.sourceIsError ? '#9C4A3A' : '#8A94AD',
@@ -1469,7 +1489,7 @@ class Component extends DCLogic {
       vendSegCards: ['DIAMOND','PLATINUM','GOLD'].map(seg=>{
         const label = seg.charAt(0) + seg.slice(1).toLowerCase();
         const total = vendorRows.reduce((a,v)=>a + (v[seg]||0), 0);
-        const top = vendorRows.filter(v=>v[seg] > 0)
+        const top = vendorRows.filter(v=>v[seg] > 0 && !this.carteiraEspecial(v.vd))
           .sort((a,b)=> (b[seg]-a[seg]) || ((b[seg]/b.total)-(a[seg]/a.total)))
           .slice(0,3)
           .map((v,i)=>({
@@ -1491,7 +1511,7 @@ class Component extends DCLogic {
           top, vazio: !top.length
         };
       }),
-      vendorRows: vendorRows.map(v=>({
+      vendorRows: vendorRows.map((v,i)=>({
         vd: v.vd,
         total: this.fmtInt(v.total),
         diamond: this.fmtInt(v.DIAMOND),
@@ -1507,7 +1527,10 @@ class Component extends DCLogic {
         risco: v.risco == null ? '—' : (v.risco ? this.fmtBRL(v.risco) : 'R$ 0'),
         riscoColor: v.risco ? '#9C4A3A' : '#8A94AD',
         riscoTip: v.risco == null ? 'Prévia operacional ainda carregando' : (v.riscoQtd + (v.riscoQtd === 1 ? ' cliente/coligada descendo' : ' clientes/coligadas descendo') + ' na prévia'),
-        rowBg: (det && det.vd === v.vd && !det.seg) ? '#eef2ff' : 'transparent',
+        rowBg: (det && det.vd === v.vd && !det.seg) ? '#eef2ff' : (this.carteiraEspecial(v.vd) ? '#f7f8fb' : 'transparent'),
+        nomeCor: this.carteiraEspecial(v.vd) ? '#8A94AD' : '#0B1733',
+        especial: this.carteiraEspecial(v.vd),
+        sepBorder: (this.carteiraEspecial(v.vd) && i > 0 && !this.carteiraEspecial(vendorRows[i-1].vd)) ? '2px solid #dde1ee' : '0',
         aberto: !!(det && det.vd === v.vd && !det.seg),
         onClick: ()=> {
           const aberto = det && det.vd === v.vd && !det.seg;
@@ -2108,7 +2131,15 @@ class Component extends DCLogic {
       if(typeof va === 'string') return sortDir*va.localeCompare(vb || '');
       return sortDir*((va||0)-(vb||0));
     });
-    return rows;
+    // Carteiras que nao sao de vendedor (Inativo, Bloqueados, E-commerce)
+    // ficam sempre no fim, separadas.
+    const esp = rows.filter(r=>this.carteiraEspecial(r.vd));
+    return rows.filter(r=>!this.carteiraEspecial(r.vd)).concat(esp);
+  }
+
+  carteiraEspecial(vd){
+    const n = String(vd || '').replace(/\s+/g,' ').trim().toLowerCase();
+    return n === 'vendedor inativo' || n === 'clientes bloqueados' || n === 'e-commerce' || n === 'ecommerce' || n === '—';
   }
 
   toggleVendSort(col){
