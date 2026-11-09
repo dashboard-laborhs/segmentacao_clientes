@@ -128,7 +128,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     <nav style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap">
       <div id="tour-nav" style="display:flex;gap:8px;flex-wrap:wrap">
         <button onClick="{{ goToGeral }}" style="font-family:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid {{ navGeralBorder }};background:{{ navGeralBg }};color:{{ navGeralTxt }}">Visão Oficial</button>
-        <button onClick="{{ goToVendedor }}" style="display:none;font-family:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid {{ navVendedorBorder }};background:{{ navVendedorBg }};color:{{ navVendedorTxt }}">Visão por Vendedor</button>
+        <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ goToVendedor }}" style="font-family:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid {{ navVendedorBorder }};background:{{ navVendedorBg }};color:{{ navVendedorTxt }}">Visão por Vendedor</button>
+        </sc-if>
         <button id="tour-tendencia-btn" onClick="{{ goToTendencia }}" disabled="{{ modoOperacionalDisabled }}" style="font-family:inherit;font-size:13px;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid {{ navTendenciaBorder }};background:{{ navTendenciaBg }};color:{{ navTendenciaTxt }};opacity:{{ modoOperacionalOpacity }}">Tendência das Mudanças</button>
       </div>
       <div id="tour-agrupamento" style="display:flex;align-items:center;gap:9px;flex-shrink:0;background:#fff;border:1px solid #e6e9f2;border-radius:12px;padding:8px 14px">
@@ -1259,7 +1261,7 @@ class Component extends DCLogic {
       criteriaCardsOpacity: this.state.criteriaCardsOpen ? '1' : '0',
       toggleCriteriaCardsPanel: ()=> this.setState({criteriaCardsOpen:!this.state.criteriaCardsOpen}),
       viewGeral: !isVendedorView && !isTendenciaView,
-      viewVendedor: isVendedorView,
+      viewVendedor: isVendedorView && !window.LABOR_DASH_CARTEIRA,
       viewTendencia: isTendenciaView,
       goToGeral: ()=> this.setState({view:'geral', dataMode:'oficial'}),
       goToVendedor: ()=> this.setState({view:'vendedor'}),
