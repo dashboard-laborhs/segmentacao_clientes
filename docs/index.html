@@ -178,18 +178,18 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     <!-- Critérios por cluster (só em modo Oficial, com transição de altura ao trocar de modo) -->
     <div style="display:grid;grid-template-rows:{{ criteriosGridRows }};transition:grid-template-rows .35s ease,margin-bottom .35s ease;margin-bottom:{{ criteriosGridMargin }}">
     <div style="overflow:{{ criteriosOverflow }};min-height:0;opacity:{{ criteriosOpacity }};transition:opacity .2s ease">
-    <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:20px 22px">
-      <div id="tour-criterios" class="lbr-expand-header" onClick="{{ toggleCriteriaCardsPanel }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:{{ criteriaCardsHeaderMargin }};padding:8px;margin-left:-8px;margin-right:-8px;margin-top:-8px;border-radius:12px">
+    <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:12px 16px">
+      <div id="tour-criterios" class="lbr-expand-header" onClick="{{ toggleCriteriaCardsPanel }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:{{ criteriaCardsHeaderMargin }};padding:5px 8px;margin-left:-8px;margin-right:-8px;margin-top:-5px;border-radius:12px">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="width:26px;height:26px;border-radius:8px;background:#eef1fe;color:#2850EF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
           </span>
           <div>
-            <h3 style="font-size: 16px; font-weight: 700; margin: 0; text-transform: uppercase; letter-spacing: .05em; color: #0B1733">CRITÉRIOS DEFINIDOS POR SEGMENTO</h3>
-            <div style="font-size:11.5px;color:#8A94AD;margin-top:2px;text-transform:none;letter-spacing:normal;font-weight:400">Confira os critérios e valores mínimos de cada segmento de cliente.</div>
+            <h3 style="display:inline;font-size:13.5px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critérios definidos por segmento</h3>
+            <span style="font-size:11.5px;color:#8A94AD;margin-left:10px;text-transform:none;letter-spacing:normal;font-weight:400">Confira os critérios e valores mínimos de cada segmento de cliente.</span>
           </div>
         </div>
-        <span style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:8px;padding:7px 11px;white-space:nowrap;flex-shrink:0">{{ criteriaCardsToggleLabel }}</span>
+        <span style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:8px;padding:5px 10px;white-space:nowrap;flex-shrink:0">{{ criteriaCardsToggleLabel }}</span>
       </div>
       <div style="display:grid;grid-template-rows:{{ criteriaCardsGridRows }};transition:grid-template-rows .3s ease">
       <div style="overflow:{{ criteriaCardsOverflow }};min-height:0;opacity:{{ criteriaCardsOpacity }};transition:opacity .18s ease">
@@ -217,21 +217,21 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       </div>
       </div>
       <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ true }}">
-      <div id="tour-simulacao" style="margin-top:16px;padding-top:14px;border-top:1px solid #eef0f7">
-        <div class="lbr-expand-header" onClick="{{ toggleCriteriaPanel }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:{{ criteriaBodyMargin }};padding:8px;margin-left:-8px;margin-right:-8px;margin-top:-8px;border-radius:12px">
+      <div id="tour-simulacao" style="margin-top:8px;padding-top:8px;border-top:1px solid #eef0f7">
+        <div class="lbr-expand-header" onClick="{{ toggleCriteriaPanel }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:{{ criteriaBodyMargin }};padding:5px 8px;margin-left:-8px;margin-right:-8px;margin-top:-5px;border-radius:12px">
           <div>
             <div style="display:flex;align-items:center;gap:8px">
               <span style="width:26px;height:26px;border-radius:7px;background:#eef1fe;color:#2850EF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M2 14h4"></path><path d="M10 8h4"></path><path d="M18 16h4"></path></svg>
               </span>
               <div>
-                <div style="font-size:11px;font-weight:800;color:#6A748F;text-transform:uppercase;letter-spacing:.05em">Simulação temporária</div>
-                <div style="font-size:11.5px;color:#8A94AD;margin-top:2px">Altere os critérios e a coluna "Segmentação (Simulação)" recalcula nesta tela. Ao atualizar a página, volta ao padrão.</div>
+                <span style="font-size:11px;font-weight:800;color:#6A748F;text-transform:uppercase;letter-spacing:.05em">Simulação temporária</span>
+                <span style="font-size:11.5px;color:#8A94AD;margin-left:10px">Altere os critérios e a coluna "Segmentação (Simulação)" recalcula nesta tela. Ao atualizar a página, volta ao padrão.</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:8px;padding:7px 11px;white-space:nowrap">{{ criteriaToggleLabel }}</span>
+            <span style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:8px;padding:5px 10px;white-space:nowrap">{{ criteriaToggleLabel }}</span>
             <sc-if value="{{ criteriaOpen }}" hint-placeholder-val="{{ true }}">
               <button onClick="{{ resetCriteria }}" style="font-family:inherit;font-size:11.5px;font-weight:700;color:#2850EF;background:#eef1fe;border:none;border-radius:8px;padding:7px 11px;cursor:pointer;white-space:nowrap;position:relative;z-index:1">Restaurar padrão</button>
             </sc-if>
