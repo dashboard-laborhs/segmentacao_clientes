@@ -101,21 +101,21 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <!-- Boas-vindas -->
     <sc-if value="{{ showFaixa }}" hint-placeholder-val="{{ true }}">
-      <section style="background:linear-gradient(90deg,{{ faixaBg }} 0%,#fff 55%);border:1px solid {{ faixaBorda }};border-left:4px solid {{ faixaCor }};border-radius:16px;margin:-8px 0 24px;padding:16px 20px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 18px rgba(11,23,51,.04)">
+      <section style="background:linear-gradient(110deg,{{ faixaCor }} 0%,{{ faixaCor2 }} 100%);border-radius:16px;margin:-8px 0 24px;padding:16px 20px;display:flex;align-items:center;gap:20px;box-shadow:0 10px 24px {{ faixaSombra }}">
         <div style="flex:1;min-width:0">
-          <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:{{ faixaCor }};margin-bottom:3px">{{ faixaPerfil }}</div>
-          <div style="font-size:18px;font-weight:800;color:#0B1733">{{ welcomeTitle }}</div>
-          <div style="font-size:13px;color:#4F5D78;margin-top:4px;line-height:1.45">{{ welcomePre }}<b>{{ welcomeBold }}</b>{{ welcomePost }}</div>
+          <span style="display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:3px 10px;margin-bottom:6px">{{ faixaPerfil }}</span>
+          <div style="font-size:18px;font-weight:800;color:#fff">{{ welcomeTitle }}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.86);margin-top:4px;line-height:1.45">{{ welcomePre }}<b style="color:#fff">{{ welcomeBold }}</b>{{ welcomePost }}</div>
           <sc-if value="{{ welcomeHasNames }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
               <sc-for list="{{ welcomeNames }}" as="n" hint-placeholder-count="3">
-                <span style="font-size:11px;font-weight:700;color:#4F5D78;background:#fff;border:1px solid #e4e8f4;border-radius:999px;padding:4px 9px">{{ n.nome }}</span>
+                <span style="font-size:11px;font-weight:700;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);border-radius:999px;padding:4px 9px">{{ n.nome }}</span>
               </sc-for>
             </div>
           </sc-if>
         </div>
-        <button onClick="{{ startTour }}" style="font-family:inherit;font-size:12.5px;font-weight:700;border-radius:10px;padding:9px 14px;flex-shrink:0;cursor:pointer;border:1px solid {{ faixaCor }};background:{{ faixaCor }};color:#fff;white-space:nowrap">Fazer o tour</button>
-        <button onClick="{{ fecharFaixa }}" title="Fechar" style="font-family:inherit;font-size:16px;line-height:1;border-radius:10px;width:34px;height:34px;flex-shrink:0;cursor:pointer;border:1px solid #dde1ee;background:#fff;color:#6A748F">×</button>
+        <button onClick="{{ startTour }}" style="font-family:inherit;font-size:12.5px;font-weight:700;border-radius:10px;padding:9px 14px;flex-shrink:0;cursor:pointer;border:1px solid #fff;background:#fff;color:{{ faixaCor }};white-space:nowrap">Fazer o tour</button>
+        <button onClick="{{ fecharFaixa }}" title="Fechar" style="font-family:inherit;font-size:16px;line-height:1;border-radius:10px;width:34px;height:34px;flex-shrink:0;cursor:pointer;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff">×</button>
       </section>
     </sc-if>
 
@@ -2126,17 +2126,17 @@ class Component extends DCLogic {
       const nome = meta.nome || (nomes.length === 1 ? nomes[0] : '');
       return { welcomeTitle: ola(meta.usuario || nome), welcomePre:'Esta é a ', welcomeBold:'sua carteira', welcomePost:': ' + nClientes + '.',
         welcomeHasNames:false, welcomeNames:[], visaoLabel: nome ? 'Carteira: ' + nome : 'Sua carteira',
-        faixaPerfil:'Vendedor', faixaCor:'#2850EF', faixaBg:'#eef1fe', faixaBorda:'#dfe5fd' };
+        faixaPerfil:'Vendedor', faixaCor:'#2850EF', faixaCor2:'#6A86FF', faixaSombra:'rgba(40,80,239,.22)' };
     }
     if(carteira.startsWith('grupos/')){
       const nv = nomes.length + (nomes.length === 1 ? ' vendedor' : ' vendedores');
       return { welcomeTitle: ola(meta.usuario), welcomePre:'Esta é a visão do ', welcomeBold:'seu grupo', welcomePost:': ' + nv + ' e ' + nClientes + '.',
         welcomeHasNames: nomes.length > 0, welcomeNames: nomes.map(nome=>({nome})), visaoLabel: (meta.usuario ? 'Grupo: ' + meta.usuario + ' · ' : 'Grupo · ') + nv,
-        faixaPerfil:'Adm. Vendas', faixaCor:'#0E7C86', faixaBg:'#e3f3f4', faixaBorda:'#cbe7e9' };
+        faixaPerfil:'Adm. Vendas', faixaCor:'#0B6E77', faixaCor2:'#17A3A1', faixaSombra:'rgba(14,124,134,.22)' };
     }
     return { welcomeTitle: ola(''), welcomePre:'Você está na ', welcomeBold:'Visão Gestão', welcomePost:', com todas as carteiras: ' + nClientes + '.',
       welcomeHasNames:false, welcomeNames:[], visaoLabel:'Visão Gestão · todas as carteiras',
-      faixaPerfil:'Gestão', faixaCor:'#001E51', faixaBg:'#e4e9f5', faixaBorda:'#d3dbec' };
+      faixaPerfil:'Gestão', faixaCor:'#001E51', faixaCor2:'#1D3F86', faixaSombra:'rgba(0,30,81,.25)' };
   }
 
   // Cards de ranking da Tendencia ajustados ao perfil: Gestao ve o top 5 de
