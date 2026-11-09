@@ -326,9 +326,14 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <!-- Critério com mais impacto -->
     <section id="tour-impacto" style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
-      <div style="flex:0 0 250px;min-width:200px">
+      <div style="flex:0 0 260px;min-width:220px">
         <h3 style="font-size:13.5px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critério com mais impacto</h3>
-        <div style="font-size:11.5px;color:#8A94AD;margin-top:3px;line-height:1.35">Entre os {{ vendCountLabel }} clientes que mudaram de segmento ({{ direcaoLabel }}), quantos mudaram por cada critério.</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px">
+          <span style="font-size:26px;font-weight:800;line-height:1;color:#0B1733">{{ vendCountLabel }}</span>
+          <span style="font-size:12px;color:#6A748F;font-weight:600">clientes mudaram de segmento</span>
+        </div>
+        <div style="font-size:12px;font-weight:700;margin-top:5px"><span style="color:#2F7A56">▲ {{ impactoUp }} subiram</span> <span style="color:#b9c0d4">·</span> <span style="color:#9C4A3A">▼ {{ impactoDown }} caíram</span></div>
+        <div style="font-size:10.5px;color:#9aa3bd;margin-top:4px">{{ direcaoLabel }} · um cliente pode mudar por mais de um critério</div>
       </div>
       <div class="lbr-impacto" style="flex:1;min-width:260px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px">
         <sc-for list="{{ criteriaImpact }}" as="ci" hint-placeholder-count="4">
@@ -337,7 +342,11 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <span style="font-size:12px;font-weight:700;color:#0B1733;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ci.label }}</span>
               <span style="font-size:11.5px;color:#6A748F;white-space:nowrap"><b style="color:#0B1733">{{ ci.count }}</b> · {{ ci.pct }}</span>
             </div>
-            <div style="margin-top:7px;background:#eef0f7;border-radius:4px;height:7px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ ci.pctW }};background:#2850EF;animation:lbrbar .6s ease"></div></div>
+            <div style="margin-top:7px;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden;display:flex">
+              <div style="height:100%;width:{{ ci.upW }};background:#3E9B6E;animation:lbrbar .6s ease"></div>
+              <div style="height:100%;width:{{ ci.downW }};background:#C2604B;animation:lbrbar .6s ease"></div>
+            </div>
+            <div style="font-size:11px;font-weight:700;margin-top:5px"><span style="color:#2F7A56">▲ {{ ci.up }}</span> <span style="color:#9C4A3A;margin-left:6px">▼ {{ ci.down }}</span></div>
           </div>
         </sc-for>
       </div>
@@ -1495,6 +1504,8 @@ class Component extends DCLogic {
       tTopPerdendo: tendencia ? tendencia.topPerdendo : [],
       ...this.rankingTendenciaInfo(tendencia),
       vendCountLabel: this.fmtInt(criteriaImpactData.total),
+      impactoUp: this.fmtInt(criteriaImpactData.totalUp || 0),
+      impactoDown: this.fmtInt(criteriaImpactData.totalDown || 0),
       criteriaImpact: criteriaImpactData.list,
       sortVendVd: ()=>this.toggleVendSort('vd'),
       sortVendTotal: ()=>this.toggleVendSort('total'),
@@ -2172,22 +2183,29 @@ class Component extends DCLogic {
 
   criteriaImpactData(){
     const labels = {fm:'Faturamento', mg:'Cash Margin', sk:'Média SKUs', mc:'Meses c/ compra'};
-    const counts = {fm:0, mg:0, sk:0, mc:0};
-    let total = 0;
+    const up = {fm:0, mg:0, sk:0, mc:0}, down = {fm:0, mg:0, sk:0, mc:0};
+    let total = 0, totalUp = 0, totalDown = 0;
     this.data.RAW.forEach(r=>{
       const reasons = this.windowChangeReasons(r);
       if(!reasons.length) return;
       total++;
-      reasons.forEach(f=>{ counts[f] = (counts[f]||0)+1; });
+      const subiu = this.windowDirection(r) === 'up';
+      if(subiu) totalUp++; else totalDown++;
+      reasons.forEach(f=>{ if(subiu) up[f]++; else down[f]++; });
     });
-    const maxCount = Math.max(...Object.values(counts), 1);
-    const list = ['fm','mg','sk','mc'].map(f=>({
-      label: labels[f],
-      count: counts[f],
-      pct: total ? (counts[f]/total*100).toFixed(1).replace('.', ',')+'%' : '0,0%',
-      pctW: Math.round((counts[f]/maxCount)*100)+'%'
-    })).sort((a,b)=>b.count-a.count);
-    return {list, total};
+    const maxCount = Math.max(...['fm','mg','sk','mc'].map(f=>up[f]+down[f]), 1);
+    const list = ['fm','mg','sk','mc'].map(f=>{
+      const c = up[f] + down[f];
+      return {
+        label: labels[f],
+        count: c,
+        up: up[f], down: down[f],
+        pct: total ? (c/total*100).toFixed(1).replace('.', ',')+'%' : '0,0%',
+        upW: (up[f]/maxCount*100).toFixed(1)+'%',
+        downW: (down[f]/maxCount*100).toFixed(1)+'%'
+      };
+    }).sort((a,b)=>b.count-a.count);
+    return {list, total, totalUp, totalDown};
   }
 
   // Motivo da mudanca olhando so a regua que importa: descendo, os criterios
