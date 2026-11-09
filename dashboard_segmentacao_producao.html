@@ -339,10 +339,12 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     <div style="display:flex;align-items:center;justify-content:space-between;margin:0 2px 10px">
       <div style="font-size:12.5px;color:#6A748F"><span style="color:#0B1733;font-weight:700">{{ countLabel }}</span> clientes encontrados</div>
       <div style="display:flex;align-items:center;gap:8px">
+        <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ true }}">
         <button onClick="{{ exportRows }}" disabled="{{ exportDisabled }}" style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:9px;padding:7px 11px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;opacity:{{ exportOpacity }}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2850EF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
           Exportar tabela
         </button>
+        </sc-if>
         <div class="lbr-window-tip" style="position:relative;display:inline-flex;align-items:center" title="">
           <button style="font-family:inherit;width:30px;height:30px;border-radius:9px;border:1px solid #dde1ee;background:#fff;color:#2850EF;display:inline-flex;align-items:center;justify-content:center;cursor:help">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 17h.01"></path><path d="M9.8 9a2.3 2.3 0 0 1 4.45.8c0 1.7-2.25 1.95-2.25 3.45"></path></svg>
@@ -636,10 +638,12 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         </div>
         <div style="display:flex;align-items:center;gap:10px;padding-bottom:5px;margin-left:auto">
           <div style="font-size:12.5px;color:#6A748F">{{ tCountLabel }} clientes mudando</div>
+          <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ true }}">
           <button onClick="{{ exportTendencia }}" disabled="{{ tExportDisabled }}" style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:9px;padding:7px 11px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;opacity:{{ tExportOpacity }}">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2850EF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
             Exportar tabela
           </button>
+          </sc-if>
         </div>
       </section>
 
@@ -1452,6 +1456,7 @@ class Component extends DCLogic {
   }
 
   exportRows(){
+    if(window.LABOR_DASH_CARTEIRA) return; // exportar so na Visao Gestao
     const s = this.state;
     const isOperacional = s.dataMode === 'operacional';
     const leg = this.windowLegend();
@@ -1505,6 +1510,7 @@ class Component extends DCLogic {
   }
 
   exportTendencia(){
+    if(window.LABOR_DASH_CARTEIRA) return; // exportar so na Visao Gestao
     const s = this.state;
     const clientes = this.tendenciaData('loja').rows.map(t=>t.x);
     const metricas = [
