@@ -455,6 +455,30 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <sc-if value="{{ viewVendedor }}" hint-placeholder-val="{{ false }}">
 
+    <!-- Concentracao por segmento -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:18px">
+      <sc-for list="{{ vendSegCards }}" as="sc" hint-placeholder-count="3">
+        <section style="background:#fff;border:1px solid #e6e9f2;border-top:4px solid {{ sc.cor }};border-radius:16px;padding:16px 18px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ sc.bg }};color:{{ sc.cor }}">{{ sc.label }}</span>
+            <span style="font-size:12px;color:#8A94AD">{{ sc.totalLabel }}</span>
+          </div>
+          <div style="font-size:11.5px;color:#8A94AD;margin:6px 0 10px">Vendedores com mais clientes {{ sc.label }}</div>
+          <sc-if value="{{ sc.vazio }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;color:#8A94AD;padding:6px 0">Nenhum cliente {{ sc.label }} hoje.</div>
+          </sc-if>
+          <sc-for list="{{ sc.top }}" as="t" hint-placeholder-count="3">
+            <div onClick="{{ t.onClick }}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #f1f3f9;cursor:pointer">
+              <span style="width:20px;font-size:12px;font-weight:700;color:#8A94AD">{{ t.pos }}</span>
+              <span style="flex:1;font-size:13px;font-weight:600;color:#0B1733;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.vd }}</span>
+              <span style="font-size:13px;font-weight:700;color:{{ sc.cor }}">{{ t.qtd }}</span>
+              <span style="width:92px;text-align:right;font-size:11.5px;color:#6A748F">{{ t.pct }}</span>
+            </div>
+          </sc-for>
+        </section>
+      </sc-for>
+    </div>
+
     <!-- Critério com mais impacto -->
     <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:20px 22px;margin-bottom:18px">
       <h3 style="font-size:16px;font-weight:700;margin:0 0 4px;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Critério com mais impacto ({{ direcaoLabel }})</h3>
@@ -1326,6 +1350,25 @@ class Component extends DCLogic {
       caretVendPctGold: vendCaret('pctGold'),
       caretVendPctFatGold: vendCaret('pctFatGold'),
       caretVendRisco: vendCaret('risco'),
+      vendSegCards: ['DIAMOND','PLATINUM','GOLD'].map(seg=>{
+        const label = seg.charAt(0) + seg.slice(1).toLowerCase();
+        const total = vendorRows.reduce((a,v)=>a + (v[seg]||0), 0);
+        const top = vendorRows.filter(v=>v[seg] > 0)
+          .sort((a,b)=> (b[seg]-a[seg]) || ((b[seg]/b.total)-(a[seg]/a.total)))
+          .slice(0,3)
+          .map((v,i)=>({
+            pos: (i+1) + 'º',
+            vd: v.vd,
+            qtd: this.fmtInt(v[seg]),
+            pct: this.fmtPct(v.total ? v[seg]*100/v.total : 0) + ' da carteira',
+            onClick: ()=> this.setState({view:'geral', fVend:v.vd, fAtual:seg, dataMode:'oficial', page:0})
+          }));
+        return {
+          label, cor: this.TXT[seg], bg: this.BG[seg],
+          totalLabel: this.fmtInt(total) + (total === 1 ? ' cliente no total' : ' clientes no total'),
+          top, vazio: !top.length
+        };
+      }),
       vendorRows: vendorRows.map(v=>({
         vd: v.vd,
         total: this.fmtInt(v.total),
