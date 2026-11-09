@@ -281,7 +281,10 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:{{ c.color }}">{{ c.atual }}</div>
           <sc-if value="{{ c.trendMeaningful }}" hint-placeholder-val="{{ true }}">
             <div style="font-size:11.5px;color:{{ c.deltaColor }};margin-top:4px;font-weight:700">{{ c.deltaLabel }}</div>
-            <div style="font-size:11px;color:#8A94AD;margin-top:3px;font-weight:600">{{ c.flowLabel }}</div>
+            <div title="{{ c.flowTip }}" style="font-size:11px;color:#8A94AD;margin-top:3px;font-weight:600;line-height:1.45;cursor:help">
+              <div><span style="color:#2F7A56">＋</span> {{ c.entLabel }}</div>
+              <div><span style="color:#9C4A3A">－</span> {{ c.saiLabel }}</div>
+            </div>
           </sc-if>
           <div style="margin-top:13px;padding-top:12px;border-top:1px solid rgba(11,23,51,0.07)">
             <div style="display:flex;align-items:center;gap:7px;font-size:11px">
@@ -1210,7 +1213,14 @@ class Component extends DCLogic {
     const padraoCounts = this.defaultCounts(cardRows);
     const simulationActive = this.criteriaActiveFor(this.criteria());
     const j2Counts = this.LEVELS.reduce((acc,l)=>({...acc,[l]:0}),{});
-    cardRows.forEach(r=>{ const l = this.criterioJ2(r); j2Counts[l] = (j2Counts[l] || 0) + 1; });
+    // Cliente "novo" = sem compra na janela anterior (sem historico ou tudo zero):
+    // conta como entrada no segmento atual, e nao como Standard no anterior.
+    const cardJ2 = (r)=>{
+      const fm2 = (r.fms||[])[1], mc2 = (r.mcs||[])[1];
+      if(fm2 == null || (!Number(fm2) && !Number(mc2))) return 'NOVO';
+      return this.criterioJ2(r);
+    };
+    cardRows.forEach(r=>{ const l = cardJ2(r); j2Counts[l] = (j2Counts[l] || 0) + 1; });
     const windows = this.windowLegend();
     const windowsOficiais = this.windowLegend(true);
     const isOperacional = this.state.dataMode === 'operacional';
@@ -1246,13 +1256,31 @@ class Component extends DCLogic {
       const auto = C.auto[l]||0, atual = padraoCounts[l]||0, autoNoSku = createdCounts[l]||0, j2 = j2Counts[l]||0;
       const mx = Math.max(auto,atual,j2,simulationActive ? autoNoSku : 0,1);
       const active = this.state.fAtual===l;
-      const chegaram = cardRows.filter(r => this.criterioPadrao(r)===l && this.criterioJ2(r)!==l).length;
-      const sairam = cardRows.filter(r => this.criterioJ2(r)===l && this.criterioPadrao(r)!==l).length;
+      const ordL = this.ORDER[l] ?? 0;
+      let entNovos = 0, entSubiram = 0, entCairam = 0, saiSubiram = 0, saiCairam = 0;
+      cardRows.forEach(r=>{
+        const a = this.criterioPadrao(r), b = cardJ2(r);
+        if(a === l && b !== l){
+          if(b === 'NOVO') entNovos++;
+          else if((this.ORDER[b] ?? 0) < ordL) entSubiram++;
+          else entCairam++;
+        } else if(b === l && a !== l){
+          if((this.ORDER[a] ?? 0) > ordL) saiSubiram++; else saiCairam++;
+        }
+      });
+      const chegaram = entNovos + entSubiram + entCairam;
+      const sairam = saiSubiram + saiCairam;
+      const partes = (lista)=> lista.filter(x=>x[0] > 0).map(x=> this.fmtInt(x[0]) + ' ' + x[1]).join(' · ');
+      const pe = partes([[entSubiram,'subiram'],[entCairam,'caíram'],[entNovos, entNovos === 1 ? 'novo' : 'novos']]);
+      const ps = partes([[saiSubiram,'subiram'],[saiCairam,'caíram']]);
+      const entLabel = 'Entraram ' + this.fmtInt(chegaram) + (pe ? ': ' + pe : '');
+      const saiLabel = 'Saíram ' + this.fmtInt(sairam) + (ps ? ': ' + ps : '');
       return {
         label:l, color:this.COLOR[l], bg:this.BG[l], txt:this.TXT[l], ring:this.RING[l],
         auto, atual, autoNoSku, j2, trendMeaningful,
         chegaram, sairam,
-        flowLabel: this.fmtInt(chegaram) + ' chegaram · ' + this.fmtInt(sairam) + ' saíram',
+        entLabel, saiLabel,
+        flowTip: 'Entraram: clientes que estão neste segmento agora e não estavam no anterior. Subiram vieram de um segmento abaixo, caíram vieram de um acima e novos não tinham compra na janela anterior. Saíram: estavam neste segmento e agora estão em outro. Clientes que ficam 12 meses sem comprar saem da base e não entram nesta conta.',
         deltaLabel: this.deltaLabel(atual, j2, isOperacional ? 'último fechado' : 'anterior'),
         deltaColor: this.deltaColor(atual, j2),
         j1Period,
