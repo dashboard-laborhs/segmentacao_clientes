@@ -488,6 +488,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <th onClick="{{ sortVendStandard }}" style="cursor:pointer;text-align:right;padding:11px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Standard <span style="color:#b9c0d4">{{ caretVendStandard }}</span></th>
               <th onClick="{{ sortVendUp }}" style="cursor:pointer;text-align:right;padding:11px 12px;font-size:10.5px;font-weight:700;color:#2F7A56;text-transform:uppercase;letter-spacing:.04em">Subiu <span style="color:#bcdfcb">{{ caretVendUp }}</span></th>
               <th onClick="{{ sortVendDown }}" style="cursor:pointer;text-align:right;padding:11px 16px;font-size:10.5px;font-weight:700;color:#9C4A3A;text-transform:uppercase;letter-spacing:.04em">Desceu <span style="color:#e6bcac">{{ caretVendDown }}</span></th>
+              <th onClick="{{ sortVendPctGold }}" title="Percentual de clientes Gold, Platinum ou Diamond na carteira (visão oficial)" style="cursor:pointer;text-align:right;padding:11px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em;border-left:1px solid #eceef5">% Clientes Gold+ <span style="color:#b9c0d4">{{ caretVendPctGold }}</span></th>
+              <th onClick="{{ sortVendPctFatGold }}" title="Percentual do faturamento médio mensal da carteira que vem de clientes Gold+ (visão oficial)" style="cursor:pointer;text-align:right;padding:11px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">% Fat. Gold+ <span style="color:#b9c0d4">{{ caretVendPctFatGold }}</span></th>
+              <th onClick="{{ sortVendRisco }}" title="Soma do faturamento médio mensal (oficial) dos clientes que estão descendo de segmento na prévia operacional" style="cursor:pointer;text-align:right;padding:11px 16px;font-size:10.5px;font-weight:700;color:#9C4A3A;text-transform:uppercase;letter-spacing:.04em">Receita em risco (prévia) <span style="color:#e6bcac">{{ caretVendRisco }}</span></th>
             </tr>
           </thead>
           <tbody>
@@ -501,6 +504,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.standard }}</td>
                 <td style="padding:11px 12px;text-align:right;font-weight:700;color:{{ v.upColor }}">{{ v.up }}</td>
                 <td style="padding:11px 16px;text-align:right;font-weight:700;color:{{ v.downColor }}">{{ v.down }}</td>
+                <td style="padding:11px 12px;text-align:right;color:#0B1733;border-left:1px solid #f1f3f9">{{ v.pctGold }}</td>
+                <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.pctFatGold }}</td>
+                <td title="{{ v.riscoTip }}" style="padding:11px 16px;text-align:right;font-weight:700;color:{{ v.riscoColor }}">{{ v.risco }}</td>
               </tr>
             </sc-for>
           </tbody>
@@ -1314,6 +1320,12 @@ class Component extends DCLogic {
       caretVendStandard: vendCaret('STANDARD'),
       caretVendUp: vendCaret('up'),
       caretVendDown: vendCaret('down'),
+      sortVendPctGold: ()=>this.toggleVendSort('pctGold'),
+      sortVendPctFatGold: ()=>this.toggleVendSort('pctFatGold'),
+      sortVendRisco: ()=>this.toggleVendSort('risco'),
+      caretVendPctGold: vendCaret('pctGold'),
+      caretVendPctFatGold: vendCaret('pctFatGold'),
+      caretVendRisco: vendCaret('risco'),
       vendorRows: vendorRows.map(v=>({
         vd: v.vd,
         total: this.fmtInt(v.total),
@@ -1325,6 +1337,11 @@ class Component extends DCLogic {
         down: this.fmtInt(v.down),
         upColor: v.up ? '#2F7A56' : '#8A94AD',
         downColor: v.down ? '#9C4A3A' : '#8A94AD',
+        pctGold: this.fmtPct(v.pctGold),
+        pctFatGold: this.fmtPct(v.pctFatGold),
+        risco: v.risco == null ? '—' : (v.risco ? this.fmtBRL(v.risco) : 'R$ 0'),
+        riscoColor: v.risco ? '#9C4A3A' : '#8A94AD',
+        riscoTip: v.risco == null ? 'Prévia operacional ainda carregando' : (v.riscoQtd + (v.riscoQtd === 1 ? ' cliente/coligada descendo' : ' clientes/coligadas descendo') + ' na prévia'),
         onClick: ()=> this.setState({view:'geral', fVend:v.vd, page:0})
       })),
       q: this.state,
@@ -1861,7 +1878,9 @@ class Component extends DCLogic {
 
   vendorRowsData(sortCol, sortDir){
     const byVend = {};
-    this.data.RAW.forEach(r=>{
+    // Sempre a visao oficial (J1 x J2), mesmo que o toggle da Visao Geral
+    // esteja em Operacional.
+    (window.LABOR_DASH?.RAW || []).forEach(r=>{
       const vd = r.vd || '—';
       if(!byVend[vd]) byVend[vd] = {vd, total:0, DIAMOND:0, PLATINUM:0, GOLD:0, STANDARD:0, up:0, down:0};
       const b = byVend[vd];
@@ -1870,8 +1889,49 @@ class Component extends DCLogic {
       const dir = this.windowDirection(r);
       if(dir==='up') b.up++;
       else if(dir==='down') b.down++;
+      // Faturamento e calculado no nivel da Coligada: conta cada Coligada uma
+      // vez por vendedor para nao duplicar valor.
+      b._seen = b._seen || {};
+      const chave = r.col || r.id;
+      if(!b._seen[chave]){
+        b._seen[chave] = true;
+        const fm = Number(r.fm) || 0;
+        b.fat = (b.fat||0) + fm;
+        if(this.criterioPadrao(r) !== 'STANDARD') b.fatGold = (b.fatGold||0) + fm;
+      }
     });
-    const rows = Object.values(byVend);
+    const opPronto = !!window.LABOR_DASH_OPERACIONAL;
+    const risco = {};
+    if(opPronto){
+      // Mesma comparacao da aba Tendencia (oficial x projetado), sem os
+      // filtros que o usuario aplicou la.
+      const byId = window.LABOR_DASH_OPERACIONAL.byId || {};
+      (window.LABOR_DASH?.RAW || []).forEach(r=>{
+        const op = byId[r.id];
+        if(!op) return;
+        const oOrder = this.ORDER[this.criterioPadrao(r)] ?? 0;
+        const pOrder = this.ORDER[this.criterioPorValores(op.fm, op.mg, op.mb, op.mc, op.sk, this.DEFAULT_CRITERIA)] ?? 0;
+        if(pOrder >= oOrder) return;
+        const vd = r.vd || '—';
+        const rv = risco[vd] = risco[vd] || {total:0, qtd:0, seen:{}};
+        const chave = r.col || r.id;
+        if(rv.seen[chave]) return;
+        rv.seen[chave] = true;
+        rv.total += Number(r.fm) || 0;
+        rv.qtd++;
+      });
+    }
+    const rows = Object.values(byVend).map(b=>{
+      const gold = b.DIAMOND + b.PLATINUM + b.GOLD;
+      const out = Object.assign({}, b, {
+        pctGold: b.total ? gold * 100 / b.total : 0,
+        pctFatGold: b.fat ? (b.fatGold||0) * 100 / b.fat : 0,
+        risco: opPronto ? (risco[b.vd] ? risco[b.vd].total : 0) : null,
+        riscoQtd: risco[b.vd] ? risco[b.vd].qtd : 0
+      });
+      delete out._seen;
+      return out;
+    });
     rows.sort((a,b)=>{
       const va = a[sortCol], vb = b[sortCol];
       if(typeof va === 'string') return sortDir*va.localeCompare(vb || '');
