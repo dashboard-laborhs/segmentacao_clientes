@@ -59,6 +59,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
   .lbr-fit-table td:nth-child(3),.lbr-fit-table td:nth-child(4){overflow-wrap:anywhere}
   .lbr-fit-table td:nth-child(5),.lbr-fit-table td:nth-child(6),.lbr-fit-table td:nth-child(7),.lbr-fit-table td:nth-child(8),.lbr-fit-table td:nth-child(9),.lbr-fit-table td:nth-child(10){white-space:nowrap!important}
   .lbr-window-tip:hover .lbr-window-pop{display:block!important}
+  .lbr-crit-tip:hover .lbr-crit-pop,.lbr-crit-tip:focus .lbr-crit-pop{display:block!important}
   .lbr-expand-header{cursor:pointer;transition:background-color .15s ease,box-shadow .15s ease}
   .lbr-expand-header:hover{background:#F4F6FC;box-shadow:inset 0 0 0 1px #dde4f5}
   @keyframes lbrbar{from{width:0}}
@@ -87,7 +88,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
     <header class="lbr-header" style="background:#fff;border:1px solid #e4e8f4;border-top:4px solid #2850EF;border-radius:16px;margin-bottom:24px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 10px 28px rgba(11,23,51,.06)">
       <div style="min-width:0">
-        <div style="font-size:10.5px;font-weight:800;color:#2850EF;text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px">Dashboard executivo</div>
+        <div style="font-size:10.5px;font-weight:800;color:#2850EF;text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px">Dashboard</div>
         <h1 class="lbr-h1" style="font-size:30px;font-weight:800;letter-spacing:0;margin:0;line-height:1.05;color:#0B1733">Segmentação de clientes</h1>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:11px">
           <span style="font-size:12px;font-weight:700;color:#4F5D78;background:#f3f5fb;border:1px solid #e4e8f4;border-radius:999px;padding:6px 10px">{{ analysisPeriodLabel }} · {{ analysisPeriod }}</span>
@@ -194,14 +195,22 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
         <span style="font-family:inherit;font-size:11.5px;font-weight:700;color:#0B1733;background:#fff;border:1px solid #dde1ee;border-radius:8px;padding:7px 11px;white-space:nowrap;flex-shrink:0">{{ criteriaCardsToggleLabel }}</span>
       </div>
       <div style="display:grid;grid-template-rows:{{ criteriaCardsGridRows }};transition:grid-template-rows .3s ease">
-      <div style="overflow:hidden;min-height:0;opacity:{{ criteriaCardsOpacity }};transition:opacity .18s ease">
+      <div style="overflow:{{ criteriaCardsOverflow }};min-height:0;opacity:{{ criteriaCardsOpacity }};transition:opacity .18s ease">
       <div class="lbr-stack" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
         <sc-for list="{{ rules }}" as="r" hint-placeholder-count="5">
           <div style="border:1px solid {{ r.border }};border-radius:12px;padding:13px 14px;background:{{ r.bgsoft }}">
             <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:{{ r.bg }};color:{{ r.txt }};letter-spacing:.03em">{{ r.label }}</span>
             <sc-for list="{{ r.items }}" as="it" hint-placeholder-count="4">
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11.5px;padding:5px 0;border-bottom:1px solid rgba(11,23,51,0.06)">
-                <span style="color:#6A748F;line-height:1.3">{{ it.k }}</span>
+                <span style="color:#6A748F;line-height:1.3;display:inline-flex;align-items:center;gap:5px">
+                  <span class="lbr-crit-tip" tabindex="0" style="position:relative;display:inline-flex;cursor:help;outline:none">
+                    <span style="width:14px;height:14px;border-radius:50%;border:1.4px solid #9aa3bd;color:#7b859f;font-size:9px;font-weight:800;line-height:1;display:inline-flex;align-items:center;justify-content:center">!</span>
+                    <span class="lbr-crit-pop" style="display:none;position:absolute;left:-6px;bottom:20px;z-index:30;width:250px;background:#0B1733;color:#fff;border-radius:10px;box-shadow:0 14px 34px rgba(11,23,51,.22);padding:10px 12px;font-size:11.5px;line-height:1.45;font-weight:400;white-space:normal;text-align:left">
+                      <b style="display:block;margin-bottom:3px;font-weight:700">{{ it.k }}</b>{{ it.tip }}
+                    </span>
+                  </span>
+                  {{ it.k }}
+                </span>
                 <span style="color:#0B1733;font-weight:600;white-space:nowrap;text-align:right">{{ it.v }}</span>
               </div>
             </sc-for>
@@ -1212,11 +1221,19 @@ class Component extends DCLogic {
     const j2Period = isOperacional ? (windowsOficiais.find(w => w.short === 'J1')?.period || '') : (windows.find(w => w.short === 'J2')?.period || '');
     const j1Label = isOperacional ? 'Hoje (prévia)' : 'J1 - Atual';
     const j2Label = isOperacional ? 'Último fechado' : 'J2 - Anterior';
+    // Explicacao de cada criterio (tooltip no bloco Criterios por segmento).
+    const fim = ' Para entrar no segmento, o cliente precisa atingir todos os mínimos ao mesmo tempo.';
+    const TIPS = {
+      'Faturamento Médio': 'Faturamento total da coligada (todas as lojas juntas) nos últimos 12 meses fechados, dividido por 12.' + fim,
+      'Cash Margin Média': 'Cash margin total da coligada (todas as lojas juntas) nos últimos 12 meses fechados, dividida por 12.' + fim,
+      'Média SKUs': 'Média de itens (SKUs) diferentes por nota fiscal do cliente nos últimos 12 meses fechados. Na regra, o valor é arredondado (ex.: 4,6 conta como 5).' + fim,
+      'Meses c/ compra': 'Em quantos dos últimos 12 meses fechados a coligada teve pelo menos uma nota fiscal.' + fim
+    };
     const rules = [
-      {label:'STANDARD', items:[{k:'Faturamento Médio',v:'—'},{k:'Cash Margin Média',v:'—'},{k:'Média SKUs',v:'—'},{k:'Meses c/ compra',v:'—'}]},
-      {label:'GOLD', items:[{k:'Faturamento Médio',v:'≥ '+this.fmtBRL(crit.GOLD.fm)},{k:'Cash Margin Média',v:'≥ '+this.fmtBRL(crit.GOLD.mg)},{k:'Média SKUs',v:'≥ '+crit.GOLD.sk},{k:'Meses c/ compra',v:'≥ '+crit.GOLD.mc}]},
-      {label:'PLATINUM', items:[{k:'Faturamento Médio',v:'≥ '+this.fmtBRL(crit.PLATINUM.fm)},{k:'Cash Margin Média',v:'≥ '+this.fmtBRL(crit.PLATINUM.mg)},{k:'Média SKUs',v:'≥ '+crit.PLATINUM.sk},{k:'Meses c/ compra',v:'≥ '+crit.PLATINUM.mc}]},
-      {label:'DIAMOND', items:[{k:'Faturamento Médio',v:'≥ '+this.fmtBRL(crit.DIAMOND.fm)},{k:'Cash Margin Média',v:'≥ '+this.fmtBRL(crit.DIAMOND.mg)},{k:'Média SKUs',v:'≥ '+crit.DIAMOND.sk},{k:'Meses c/ compra',v:'≥ '+crit.DIAMOND.mc}]},
+      {label:'STANDARD', items:[{k:'Faturamento Médio',tip:TIPS['Faturamento Médio'],v:'—'},{k:'Cash Margin Média',tip:TIPS['Cash Margin Média'],v:'—'},{k:'Média SKUs',tip:TIPS['Média SKUs'],v:'—'},{k:'Meses c/ compra',tip:TIPS['Meses c/ compra'],v:'—'}]},
+      {label:'GOLD', items:[{k:'Faturamento Médio',tip:TIPS['Faturamento Médio'],v:'≥ '+this.fmtBRL(crit.GOLD.fm)},{k:'Cash Margin Média',tip:TIPS['Cash Margin Média'],v:'≥ '+this.fmtBRL(crit.GOLD.mg)},{k:'Média SKUs',tip:TIPS['Média SKUs'],v:'≥ '+crit.GOLD.sk},{k:'Meses c/ compra',tip:TIPS['Meses c/ compra'],v:'≥ '+crit.GOLD.mc}]},
+      {label:'PLATINUM', items:[{k:'Faturamento Médio',tip:TIPS['Faturamento Médio'],v:'≥ '+this.fmtBRL(crit.PLATINUM.fm)},{k:'Cash Margin Média',tip:TIPS['Cash Margin Média'],v:'≥ '+this.fmtBRL(crit.PLATINUM.mg)},{k:'Média SKUs',tip:TIPS['Média SKUs'],v:'≥ '+crit.PLATINUM.sk},{k:'Meses c/ compra',tip:TIPS['Meses c/ compra'],v:'≥ '+crit.PLATINUM.mc}]},
+      {label:'DIAMOND', items:[{k:'Faturamento Médio',tip:TIPS['Faturamento Médio'],v:'≥ '+this.fmtBRL(crit.DIAMOND.fm)},{k:'Cash Margin Média',tip:TIPS['Cash Margin Média'],v:'≥ '+this.fmtBRL(crit.DIAMOND.mg)},{k:'Média SKUs',tip:TIPS['Média SKUs'],v:'≥ '+crit.DIAMOND.sk},{k:'Meses c/ compra',tip:TIPS['Meses c/ compra'],v:'≥ '+crit.DIAMOND.mc}]},
     ].map(r=>({...r, bg:this.BG[r.label], txt:this.TXT[r.label], border:'#eceef5', bgsoft:'#fff'}));
     const criteriaRows = ['GOLD','PLATINUM','DIAMOND'].map(level=>({
       label:level, bg:this.BG[level], txt:this.TXT[level],
@@ -1405,6 +1422,7 @@ class Component extends DCLogic {
       criteriaCardsHeaderMargin: this.state.criteriaCardsOpen ? '16px' : '0px',
       criteriaCardsGridRows: this.state.criteriaCardsOpen ? '1fr' : '0fr',
       criteriaCardsOpacity: this.state.criteriaCardsOpen ? '1' : '0',
+      criteriaCardsOverflow: this.state.criteriaCardsOpen ? 'visible' : 'hidden',
       toggleCriteriaCardsPanel: ()=> this.setState({criteriaCardsOpen:!this.state.criteriaCardsOpen}),
       viewGeral: !isVendedorView && !isTendenciaView,
       viewVendedor: isVendedorView && !window.LABOR_DASH_CARTEIRA,
