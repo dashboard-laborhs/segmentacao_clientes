@@ -484,8 +484,8 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     </div>
 
     <!-- Detalhe: clientes do vendedor no segmento -->
-    <sc-if value="{{ vendDetOpen }}" hint-placeholder-val="{{ false }}">
-    <section id="vend-detalhe" style="background:#fff;border:1px solid #e6e9f2;border-left:4px solid {{ vendDetCor }};border-radius:16px;overflow:hidden;margin-bottom:18px">
+    <sc-if value="{{ vendDetOpenTop }}" hint-placeholder-val="{{ false }}">
+    <section id="vend-detalhe-top" style="background:#fff;border:1px solid #e6e9f2;border-left:4px solid {{ vendDetCor }};border-radius:16px;overflow:hidden;margin-bottom:18px">
       <div style="padding:14px 18px;border-bottom:1px solid #eceef5;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ vendDetBg }};color:{{ vendDetCor }}">{{ vendDetSeg }}</span>
         <h3 style="font-size:15px;font-weight:700;margin:0;color:#0B1733">{{ vendDetVd }}</h3>
@@ -500,6 +500,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <thead>
             <tr style="background:#fafbfe;border-bottom:1px solid #eceef5">
               <th style="text-align:left;padding:10px 16px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Cliente</th>
+              <sc-if value="{{ vendDetShowSeg }}" hint-placeholder-val="{{ false }}"><th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Segmento</th></sc-if>
               <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Coligada</th>
               <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Fat. médio</th>
               <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Cash margin</th>
@@ -512,6 +513,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             <sc-for list="{{ vendDetRows }}" as="d" hint-placeholder-count="4">
               <tr style="border-bottom:1px solid #f1f3f9">
                 <td style="padding:10px 16px;color:#0B1733"><span style="font-weight:600">{{ d.no }}</span><span style="display:block;font-size:10.5px;color:#8A94AD">{{ d.id }}</span></td>
+                <sc-if value="{{ vendDetShowSeg }}" hint-placeholder-val="{{ false }}"><td style="padding:10px 12px"><span style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:{{ d.segBg }};color:{{ d.segCor }}">{{ d.seg }}</span></td></sc-if>
                 <td style="padding:10px 12px;color:#4F5D78">{{ d.col }}</td>
                 <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.fm }}</td>
                 <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.mg }}</td>
@@ -545,7 +547,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
     <section style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;overflow:hidden;margin-bottom:18px">
       <div style="padding:16px 18px;border-bottom:1px solid #eceef5;display:flex;align-items:center;justify-content:space-between">
         <h3 style="font-size:16px;font-weight:700;margin:0;text-transform:uppercase;letter-spacing:.05em;color:#0B1733">Segmentação por vendedor</h3>
-        <span style="font-size:12px;color:#8A94AD">Clique num vendedor para ver a carteira na Visão Geral</span>
+        <span style="font-size:12px;color:#8A94AD">Clique num vendedor para ver a carteira dele</span>
       </div>
       <div class="lbr-scroll" style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap">
@@ -566,7 +568,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           </thead>
           <tbody>
             <sc-for list="{{ vendorRows }}" as="v" hint-placeholder-count="8">
-              <tr onClick="{{ v.onClick }}" style="border-bottom:1px solid #f1f3f9;cursor:pointer">
+              <tr onClick="{{ v.onClick }}" title="Ver a carteira deste vendedor" style="border-bottom:1px solid #f1f3f9;cursor:pointer;background:{{ v.rowBg }}">
                 <td style="padding:11px 16px;font-weight:600;color:#0B1733">{{ v.vd }}</td>
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.total }}</td>
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.diamond }}</td>
@@ -579,6 +581,51 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
                 <td style="padding:11px 12px;text-align:right;color:#0B1733">{{ v.pctFatGold }}</td>
                 <td title="{{ v.riscoTip }}" style="padding:11px 16px;text-align:right;font-weight:700;color:{{ v.riscoColor }}">{{ v.risco }}</td>
               </tr>
+              <sc-if value="{{ v.aberto }}" hint-placeholder-val="{{ false }}">
+              <tr style="background:#f6f8fd"><td colspan="11" style="padding:8px 16px 12px;white-space:normal">
+<section id="vend-detalhe-bottom" style="background:#fff;border:1px solid #e6e9f2;border-left:4px solid {{ vendDetCor }};border-radius:12px;overflow:hidden;margin:4px 0 6px;box-shadow:0 4px 14px rgba(11,23,51,.06)">
+      <div style="padding:14px 18px;border-bottom:1px solid #eceef5;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:{{ vendDetBg }};color:{{ vendDetCor }}">{{ vendDetSeg }}</span>
+        <h3 style="font-size:15px;font-weight:700;margin:0;color:#0B1733">{{ vendDetVd }}</h3>
+        <span style="font-size:12px;color:#8A94AD">{{ vendDetCount }}</span>
+        <span style="margin-left:auto;display:flex;gap:8px">
+          <button onClick="{{ vendDetGeral }}" style="font-family:inherit;font-size:12px;font-weight:600;padding:6px 11px;border-radius:8px;border:1px solid #dde1ee;background:#fff;color:#2850EF;cursor:pointer">Abrir na Visão Geral</button>
+          <button onClick="{{ vendDetClose }}" title="Fechar" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#6A748F;border-radius:8px;padding:5px 7px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+        </span>
+      </div>
+      <div class="lbr-scroll" style="overflow-x:auto;max-height:420px;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap">
+          <thead>
+            <tr style="background:#fafbfe;border-bottom:1px solid #eceef5">
+              <th style="text-align:left;padding:10px 16px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Cliente</th>
+              <sc-if value="{{ vendDetShowSeg }}" hint-placeholder-val="{{ false }}"><th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Segmento</th></sc-if>
+              <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Coligada</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Fat. médio</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Cash margin</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Média SKUs</th>
+              <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Meses c/ compra</th>
+              <th style="padding:10px 12px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ vendDetRows }}" as="d" hint-placeholder-count="4">
+              <tr style="border-bottom:1px solid #f1f3f9">
+                <td style="padding:10px 16px;color:#0B1733"><span style="font-weight:600">{{ d.no }}</span><span style="display:block;font-size:10.5px;color:#8A94AD">{{ d.id }}</span></td>
+                <sc-if value="{{ vendDetShowSeg }}" hint-placeholder-val="{{ false }}"><td style="padding:10px 12px"><span style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:{{ d.segBg }};color:{{ d.segCor }}">{{ d.seg }}</span></td></sc-if>
+                <td style="padding:10px 12px;color:#4F5D78">{{ d.col }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.fm }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.mg }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.sk }}</td>
+                <td style="padding:10px 12px;text-align:right;color:#0B1733">{{ d.mc }}</td>
+                <td style="padding:10px 12px;text-align:center"><button onClick="{{ d.openTrend }}" title="Ver evolução do cliente" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#2850EF;border-radius:8px;padding:5px 8px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">finance_mode</span></button></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+              </td></tr>
+              </sc-if>
             </sc-for>
           </tbody>
         </table>
@@ -1243,8 +1290,8 @@ class Component extends DCLogic {
     const vendorRows = isVendedorView ? this.vendorRowsData(this.state.vendSortCol, this.state.vendSortDir) : [];
     const det = isVendedorView ? this.state.vendDet : null;
     const vendDetRaw = det ? (window.LABOR_DASH?.RAW || [])
-      .filter(r => (r.vd || '—') === det.vd && this.criterioPadrao(r) === det.seg)
-      .sort((a,b)=> (b.fm||0) - (a.fm||0)) : [];
+      .filter(r => (r.vd || '—') === det.vd && (!det.seg || this.criterioPadrao(r) === det.seg))
+      .sort((a,b)=> ((this.ORDER[this.criterioPadrao(b)]||0) - (this.ORDER[this.criterioPadrao(a)]||0)) || ((b.fm||0) - (a.fm||0))) : [];
     const vendCaret = (col)=> this.state.vendSortCol===col ? (this.state.vendSortDir<0?'↓':'↑') : '↕';
     const tendencia = isTendenciaView ? this.tendenciaData() : null;
 
@@ -1401,20 +1448,24 @@ class Component extends DCLogic {
       caretVendPctGold: vendCaret('pctGold'),
       caretVendPctFatGold: vendCaret('pctFatGold'),
       caretVendRisco: vendCaret('risco'),
-      vendDetOpen: !!det,
+      vendDetOpenTop: !!(det && det.seg),
+      vendDetOpenBottom: !!(det && !det.seg),
+      vendDetShowSeg: !!(det && !det.seg),
       vendDetVd: det ? det.vd : '',
-      vendDetSeg: det ? det.seg.charAt(0) + det.seg.slice(1).toLowerCase() : '',
-      vendDetCor: det ? this.TXT[det.seg] : '#2850EF',
-      vendDetBg: det ? this.BG[det.seg] : '#eef1f7',
+      vendDetSeg: det ? (det.seg ? det.seg.charAt(0) + det.seg.slice(1).toLowerCase() : 'Carteira') : '',
+      vendDetCor: det && det.seg ? this.TXT[det.seg] : '#2850EF',
+      vendDetBg: det && det.seg ? this.BG[det.seg] : '#e3e9ff',
       vendDetCount: det ? (vendDetRaw.length + (vendDetRaw.length === 1 ? ' cliente' : ' clientes')) : '',
       vendDetRows: vendDetRaw.map(r=>({
         no: r.no, id: r.id + (r.cnpj ? ' · ' + r.cnpj : ''), col: r.col || '—',
+        seg: this.criterioPadrao(r).charAt(0) + this.criterioPadrao(r).slice(1).toLowerCase(),
+        segBg: this.BG[this.criterioPadrao(r)], segCor: this.TXT[this.criterioPadrao(r)],
         fm: this.fmtBRL(r.fm), mg: this.fmtBRL(r.mg),
         sk: (Number(r.sk)||0).toFixed(1).replace('.', ','), mc: this.fmtInt(r.mc),
         openTrend: ()=> this.setState({trendRow:r, dataMode:'oficial'})
       })),
       vendDetClose: ()=> this.setState({vendDet:null}),
-      vendDetGeral: ()=> det && this.setState({view:'geral', fVend:det.vd, fAtual:det.seg, dataMode:'oficial', vendDet:null, page:0}),
+      vendDetGeral: ()=> det && this.setState({view:'geral', fVend:det.vd, fAtual:det.seg || '', dataMode:'oficial', vendDet:null, page:0}),
       vendSegCards: ['DIAMOND','PLATINUM','GOLD'].map(seg=>{
         const label = seg.charAt(0) + seg.slice(1).toLowerCase();
         const total = vendorRows.reduce((a,v)=>a + (v[seg]||0), 0);
@@ -1431,7 +1482,7 @@ class Component extends DCLogic {
             onClick: ()=> {
               const aberto = det && det.vd === v.vd && det.seg === seg;
               this.setState({vendDet: aberto ? null : {vd:v.vd, seg}});
-              if(!aberto) setTimeout(()=>{ const el = document.getElementById('vend-detalhe'); if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
+              if(!aberto) setTimeout(()=>{ const el = document.getElementById('vend-detalhe-top'); if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
             }
           }));
         return {
@@ -1456,7 +1507,13 @@ class Component extends DCLogic {
         risco: v.risco == null ? '—' : (v.risco ? this.fmtBRL(v.risco) : 'R$ 0'),
         riscoColor: v.risco ? '#9C4A3A' : '#8A94AD',
         riscoTip: v.risco == null ? 'Prévia operacional ainda carregando' : (v.riscoQtd + (v.riscoQtd === 1 ? ' cliente/coligada descendo' : ' clientes/coligadas descendo') + ' na prévia'),
-        onClick: ()=> this.setState({view:'geral', fVend:v.vd, page:0})
+        rowBg: (det && det.vd === v.vd && !det.seg) ? '#eef2ff' : 'transparent',
+        aberto: !!(det && det.vd === v.vd && !det.seg),
+        onClick: ()=> {
+          const aberto = det && det.vd === v.vd && !det.seg;
+          this.setState({vendDet: aberto ? null : {vd:v.vd, seg:null}});
+          if(!aberto) setTimeout(()=>{ const el = document.getElementById('vend-detalhe-bottom'); if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
+        }
       })),
       q: this.state,
       onSearch: (e)=> this.setFilter({search:e.target.value}),
