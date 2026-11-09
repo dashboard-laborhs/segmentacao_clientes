@@ -2399,7 +2399,10 @@ class Component extends DCLogic {
     const carteira = window.LABOR_DASH_CARTEIRA || '';
     const meta = window.LABOR_DASH_META || {};
     const rows = Array.isArray(window.LABOR_DASH_RAW_ROWS) ? window.LABOR_DASH_RAW_ROWS : [];
-    const nomes = [...new Set(rows.map(r=>String(r['d_Cliente[Nome Vendedor Proper]']||'').replace(/\s+/g,' ').trim()).filter(Boolean))].sort();
+    // Usa o RAW ja processado (LABOR_DASH_RAW_ROWS pode ser limpo depois que a
+    // previa operacional carrega).
+    const fonteNomes = (window.LABOR_DASH && window.LABOR_DASH.RAW && window.LABOR_DASH.RAW.length) ? window.LABOR_DASH.RAW.map(r=>r.vd) : rows.map(r=>r['d_Cliente[Nome Vendedor Proper]']);
+    const nomes = [...new Set(fonteNomes.map(v=>String(v||'').replace(/\s+/g,' ').trim()).filter(Boolean))].sort();
     const total = this.fmtInt(window.LABOR_DASH?.COUNTS?.total || rows.length);
     const nClientes = total + (total === '1' ? ' cliente' : ' clientes');
     const ola = (nome)=> nome ? 'Olá, ' + nome + '! 👋' : 'Olá! 👋';
