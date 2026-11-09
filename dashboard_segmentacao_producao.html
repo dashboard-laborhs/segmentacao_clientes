@@ -283,8 +283,8 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           <sc-if value="{{ c.trendMeaningful }}" hint-placeholder-val="{{ true }}">
             <div style="font-size:11.5px;color:{{ c.deltaColor }};margin-top:4px;font-weight:700">{{ c.deltaLabel }}</div>
             <div title="{{ c.flowTip }}" style="font-size:11px;color:#8A94AD;margin-top:3px;font-weight:600;line-height:1.45;cursor:help">
-              <div><span style="color:#2F7A56">＋</span> {{ c.entLabel }}</div>
-              <div><span style="color:#9C4A3A">－</span> {{ c.saiLabel }}</div>
+              <div><span style="color:#128067">＋</span> {{ c.entLabel }}</div>
+              <div><span style="color:#C94848">－</span> {{ c.saiLabel }}</div>
             </div>
           </sc-if>
           <div style="margin-top:13px;padding-top:12px;border-top:1px solid rgba(11,23,51,0.07)">
@@ -599,8 +599,8 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <th onClick="{{ sortVendPlatinum }}" style="cursor:pointer;text-align:right;padding:10px 9px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Platinum <span style="color:#b9c0d4">{{ caretVendPlatinum }}</span></th>
               <th onClick="{{ sortVendGold }}" style="cursor:pointer;text-align:right;padding:10px 9px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Gold <span style="color:#b9c0d4">{{ caretVendGold }}</span></th>
               <th onClick="{{ sortVendStandard }}" style="cursor:pointer;text-align:right;padding:10px 9px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">Standard <span style="color:#b9c0d4">{{ caretVendStandard }}</span></th>
-              <th onClick="{{ sortVendUp }}" style="cursor:pointer;text-align:right;padding:10px 9px;font-size:10.5px;font-weight:700;color:#2F7A56;text-transform:uppercase;letter-spacing:.04em">Subiu <span style="color:#bcdfcb">{{ caretVendUp }}</span></th>
-              <th onClick="{{ sortVendDown }}" style="cursor:pointer;text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#9C4A3A;text-transform:uppercase;letter-spacing:.04em">Desceu <span style="color:#e6bcac">{{ caretVendDown }}</span></th>
+              <th onClick="{{ sortVendUp }}" style="cursor:pointer;text-align:right;padding:10px 9px;font-size:10.5px;font-weight:700;color:#128067;text-transform:uppercase;letter-spacing:.04em">Subiu <span style="color:#BDE6DA">{{ caretVendUp }}</span></th>
+              <th onClick="{{ sortVendDown }}" style="cursor:pointer;text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#C94848;text-transform:uppercase;letter-spacing:.04em">Desceu <span style="color:#F2C4C4">{{ caretVendDown }}</span></th>
               <th onClick="{{ sortVendPctGold }}" title="Percentual de clientes Gold, Platinum ou Diamond na carteira (visão oficial)" style="cursor:pointer;text-align:right;padding:10px 9px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em;border-left:1px solid #eceef5">% Clientes<br>Gold+ <span style="color:#b9c0d4">{{ caretVendPctGold }}</span></th>
               <th onClick="{{ sortVendPctFatGold }}" title="Percentual do faturamento médio mensal da carteira que vem de clientes Gold+ (visão oficial)" style="cursor:pointer;text-align:right;padding:10px 16px 10px 9px;font-size:10.5px;font-weight:700;color:#6A748F;text-transform:uppercase;letter-spacing:.04em">% Fat.<br>Gold+ <span style="color:#b9c0d4">{{ caretVendPctFatGold }}</span></th>
             </tr>
@@ -679,9 +679,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
       </div>
 
       <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
-        <div style="background:#fff;border:1.5px solid #bcdfcb;border-radius:16px;padding:16px 17px">
-          <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:#e7f7ee;color:#2F7A56;letter-spacing:.03em">▲ SUBINDO</span>
-          <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:#2F7A56">{{ tSubindoTotal }}</div>
+        <div style="background:#fff;border:1.5px solid #BDE6DA;border-radius:16px;padding:16px 17px">
+          <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:#E3F5EF;color:#128067;letter-spacing:.03em">▲ SUBINDO</span>
+          <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:#128067">{{ tSubindoTotal }}</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
             <sc-for list="{{ tSubindoBreakdown }}" as="b" hint-placeholder-count="3">
               <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#fafbfe;border:1px solid #eceef5;border-radius:999px;padding:3px 8px 3px 3px">
@@ -693,9 +693,9 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
             </sc-for>
           </div>
         </div>
-        <div style="background:#fff;border:1.5px solid #e6bcac;border-radius:16px;padding:16px 17px">
-          <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:#fbeae4;color:#9C4A3A;letter-spacing:.03em">▼ DESCENDO</span>
-          <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:#9C4A3A">{{ tDescendoTotal }}</div>
+        <div style="background:#fff;border:1.5px solid #F2C4C4;border-radius:16px;padding:16px 17px">
+          <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:11px;background:#FDECEC;color:#C94848;letter-spacing:.03em">▼ DESCENDO</span>
+          <div style="font-size:30px;font-weight:800;line-height:1;letter-spacing:-0.02em;color:#C94848">{{ tDescendoTotal }}</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
             <sc-for list="{{ tDescendoBreakdown }}" as="b" hint-placeholder-count="3">
               <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;background:#fafbfe;border:1px solid #eceef5;border-radius:999px;padding:3px 8px 3px 3px">
@@ -711,14 +711,14 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
 
       <section class="lbr-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px">
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
-          <div style="font-size:11px;font-weight:800;color:#2F7A56;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloSobe }}</div>
+          <div style="font-size:11px;font-weight:800;color:#128067;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloSobe }}</div>
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubSobe }}</div>
           <sc-if value="{{ tRankingVendedores }}" hint-placeholder-val="{{ true }}">
             <sc-for list="{{ tTopGanhando }}" as="v" hint-placeholder-count="5">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
                 <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
-                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#8FCBAB"></div></div>
-                <div style="width:24px;text-align:right;color:#2F7A56;font-weight:700">{{ v.countFmt }}</div>
+                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#8ED6C2"></div></div>
+                <div style="width:24px;text-align:right;color:#128067;font-weight:700">{{ v.countFmt }}</div>
               </div>
             </sc-for>
           </sc-if>
@@ -727,11 +727,11 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
                 <div style="flex:1;min-width:0">
                   <div style="color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
-                  <sc-if value="{{ c.temFalta }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#9C4A3A;margin-top:1px;line-height:1.35">{{ c.falta }}</div></sc-if>
+                  <sc-if value="{{ c.temFalta }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#C94848;margin-top:1px;line-height:1.35">{{ c.falta }}</div></sc-if>
                 </div>
                 <div style="flex-shrink:0;color:#8A94AD;font-size:11px">{{ c.fmFmt }}</div>
                 <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.deBg }};color:{{ c.deTxt }}">{{ c.de }}</span>
-                <span style="flex-shrink:0;color:#2F7A56;font-weight:800">→</span>
+                <span style="flex-shrink:0;color:#128067;font-weight:800">→</span>
                 <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.paraBg }};color:{{ c.paraTxt }}">{{ c.para }}</span>
               </div>
             </sc-for>
@@ -741,14 +741,14 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
           </sc-if>
         </div>
         <div style="background:#fff;border:1px solid #e6e9f2;border-radius:16px;padding:16px 17px">
-          <div style="font-size:11px;font-weight:800;color:#9C4A3A;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloDesce }}</div>
+          <div style="font-size:11px;font-weight:800;color:#C94848;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">{{ tTituloDesce }}</div>
           <div style="font-size:10.5px;color:#8A94AD;margin-bottom:12px">{{ tSubDesce }}</div>
           <sc-if value="{{ tRankingVendedores }}" hint-placeholder-val="{{ true }}">
             <sc-for list="{{ tTopPerdendo }}" as="v" hint-placeholder-count="5">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
                 <div style="width:120px;flex-shrink:0;color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.vd }}</div>
-                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#E0A99A"></div></div>
-                <div style="width:24px;text-align:right;color:#9C4A3A;font-weight:700">{{ v.countFmt }}</div>
+                <div style="flex:1;background:#eef0f7;border-radius:4px;height:8px;overflow:hidden"><div style="height:100%;border-radius:4px;width:{{ v.w }};background:#F3A9A9"></div></div>
+                <div style="width:24px;text-align:right;color:#C94848;font-weight:700">{{ v.countFmt }}</div>
               </div>
             </sc-for>
           </sc-if>
@@ -757,11 +757,11 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
                 <div style="flex:1;min-width:0">
                   <div style="color:#0B1733;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ c.no }}">{{ c.no }}</div>
-                  <sc-if value="{{ c.temFalta }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#9C4A3A;margin-top:1px;line-height:1.35">{{ c.falta }}</div></sc-if>
+                  <sc-if value="{{ c.temFalta }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#C94848;margin-top:1px;line-height:1.35">{{ c.falta }}</div></sc-if>
                 </div>
                 <div style="flex-shrink:0;color:#8A94AD;font-size:11px">{{ c.fmFmt }}</div>
                 <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.deBg }};color:{{ c.deTxt }}">{{ c.de }}</span>
-                <span style="flex-shrink:0;color:#9C4A3A;font-weight:800">→</span>
+                <span style="flex-shrink:0;color:#C94848;font-weight:800">→</span>
                 <span style="flex-shrink:0;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;background:{{ c.paraBg }};color:{{ c.paraTxt }}">{{ c.para }}</span>
               </div>
             </sc-for>
@@ -846,7 +846,7 @@ window.LABOR_DASH_OPERACIONAL_SCRIPT_URL = 'https://bunzlbr.sharepoint.com/:u:/r
                     <span style="display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:{{ r.projetadoBg }};color:{{ r.projetadoTxt }}">{{ r.projetado }}</span>
                   </td>
                   <td style="padding:11px 16px;white-space:nowrap;color:#4F5D78;font-size:12px">{{ r.motivo }}</td>
-                  <td style="padding:11px 16px;color:#9C4A3A;font-size:12px;min-width:220px;max-width:340px;line-height:1.4">{{ r.falta }}</td>
+                  <td style="padding:11px 16px;color:#C94848;font-size:12px;min-width:220px;max-width:340px;line-height:1.4">{{ r.falta }}</td>
                   <td style="padding:11px 16px;white-space:nowrap;text-align:right;color:#0B1733;font-size:12px">{{ r.fmOficialFmt }} → {{ r.fmOperacionalFmt }}</td>
                   <td style="padding:11px 8px;white-space:nowrap;text-align:center">
                     <button onClick="{{ r.openTrend }}" title="Ver evolução do cliente" style="font-family:inherit;border:1px solid #dde1ee;background:#fff;color:#2850EF;border-radius:8px;padding:5px 8px;cursor:pointer;line-height:1;display:inline-flex;align-items:center"><span class="material-symbols-outlined" style="font-size:16px">finance_mode</span></button>
@@ -1319,7 +1319,7 @@ class Component extends DCLogic {
       const padrao = this.criterioPadrao(r);
       const da=this.ORDER[padrao]??0, db=this.ORDER[this.criterioCriado(r)]??0;
       let icon='—', col='#b9c0d4';
-      if(db>da){icon='▲';col='#2F7A56';} else if(db<da){icon='▼';col='#9C4A3A';}
+      if(db>da){icon='▲';col='#128067';} else if(db<da){icon='▼';col='#C94848';}
       const cri = this.criterioCriado(r);
       const fm2 = (r.fms && r.fms.length > 1) ? r.fms[1] : r.fm7;
       const mg2 = (r.mgs && r.mgs.length > 1) ? r.mgs[1] : r.mg7;
@@ -1578,8 +1578,8 @@ class Component extends DCLogic {
         standard: this.fmtInt(v.STANDARD),
         up: this.fmtInt(v.up),
         down: this.fmtInt(v.down),
-        upColor: v.up ? '#2F7A56' : '#8A94AD',
-        downColor: v.down ? '#9C4A3A' : '#8A94AD',
+        upColor: v.up ? '#128067' : '#8A94AD',
+        downColor: v.down ? '#C94848' : '#8A94AD',
         pctGold: this.fmtPct(v.pctGold),
         pctFatGold: this.fmtPct(v.pctFatGold),
         rowBg: (det && det.vd === v.vd && !det.seg) ? '#eef2ff' : (this.carteiraEspecial(v.vd) ? '#f7f8fb' : 'transparent'),
@@ -1841,10 +1841,10 @@ class Component extends DCLogic {
 
   deltaColor(base, ref){
     if(!ref && !base) return '#8A94AD';
-    if(!ref) return '#2F7A56';
+    if(!ref) return '#128067';
     const pct = ((base-ref)/ref)*100;
     if(Math.abs(pct)<0.05) return '#8A94AD';
-    return pct>0 ? '#2F7A56' : '#9C4A3A';
+    return pct>0 ? '#128067' : '#C94848';
   }
 
   metricDeltaLabel(current, base){
@@ -1862,7 +1862,7 @@ class Component extends DCLogic {
     if(!base) return '#8A94AD';
     const pct = ((current-base)/base)*100;
     if(Math.abs(pct)<0.05) return '#8A94AD';
-    return pct>0 ? '#2F7A56' : '#9C4A3A';
+    return pct>0 ? '#128067' : '#C94848';
   }
 
   trendCards(r){
@@ -2309,7 +2309,7 @@ class Component extends DCLogic {
 
     const breakdown = (dir)=>{
       const seta = dir === 'up' ? '↑' : '↓';
-      const setaColor = dir === 'up' ? '#2F7A56' : '#9C4A3A';
+      const setaColor = dir === 'up' ? '#128067' : '#C94848';
       const group = {};
       agrupado.filter(x=>x.direcao===dir).forEach(x=>{
         const key = x.oficial + '|' + x.projetado;
@@ -2330,7 +2330,7 @@ class Component extends DCLogic {
       oficialBg:this.BG[x.oficial], oficialTxt:this.TXT[x.oficial], oficial:x.oficial,
       projetadoBg:this.BG[x.projetado], projetadoTxt:this.TXT[x.projetado], projetado:x.projetado,
       setaIcon: x.direcao==='up' ? '▲' : '▼',
-      setaColor: x.direcao==='up' ? '#2F7A56' : '#9C4A3A',
+      setaColor: x.direcao==='up' ? '#128067' : '#C94848',
       motivo:x.motivo, x, falta: x.falta || '—',
       fmOficialFmt:this.fmtBRL(x.fmOficial), fmOperacionalFmt:this.fmtBRL(x.fmOperacional),
       openTrend: ()=> this.setState({trendRow: this.aplicarOperacional(x.r, x.op), dataMode:'operacional'})
