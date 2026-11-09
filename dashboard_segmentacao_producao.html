@@ -2186,7 +2186,7 @@ class Component extends DCLogic {
     const labels = {fm:'Faturamento', mg:'Cash Margin', sk:'Média SKUs', mc:'Meses c/ compra'};
     const up = {fm:0, mg:0, sk:0, mc:0}, down = {fm:0, mg:0, sk:0, mc:0};
     let total = 0, totalUp = 0, totalDown = 0;
-    this.data.RAW.forEach(r=>{
+    this.agruparRows(this.data.RAW).forEach(r=>{
       const reasons = this.windowChangeReasons(r);
       if(!reasons.length) return;
       total++;
