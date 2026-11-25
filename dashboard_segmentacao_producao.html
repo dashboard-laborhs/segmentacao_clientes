@@ -2304,8 +2304,13 @@ class Component extends DCLogic {
     const labels = {fm:'Faturamento', mg:'Cash Margin', sk:'Média SKUs', mc:'Meses c/ compra'};
     const up = {fm:0, mg:0, sk:0, mc:0}, down = {fm:0, mg:0, sk:0, mc:0};
     let total = 0, totalUp = 0, totalDown = 0;
+    // Em modo operacional usa a mesma base e a mesma regua da aba Tendencia das
+    // Mudancas: ignora clientes sem classificacao no ultimo fechado (so existem
+    // na previa de hoje) e conta como motivo so o criterio que importa.
+    const op = this.state.dataMode === 'operacional';
     this.agruparRows(this.data.RAW).forEach(r=>{
-      const reasons = this.windowChangeReasons(r);
+      if(op && this.criterioJ2(r) === 'SEM SEGMENTAÇÃO') return;
+      const reasons = this.windowChangeReasons(r, op);
       if(!reasons.length) return;
       total++;
       const subiu = this.windowDirection(r) === 'up';
@@ -2490,17 +2495,31 @@ class Component extends DCLogic {
   }
 
   matchesWindowChangeReason(r, reason){
-    const reasons = this.windowChangeReasons(r);
+    const reasons = this.windowChangeReasons(r, this.state.dataMode === 'operacional');
     if(reason === 'multi') return reasons.length > 1;
     return reasons.includes(reason);
   }
 
-  windowChangeReasons(r){
+  // reguaRelevante (modo operacional): mesma regra de motivoMudanca da aba
+  // Tendencia - caindo, os criterios abaixo do minimo do segmento anterior;
+  // subindo, os que passaram a atingir o minimo do segmento novo.
+  windowChangeReasons(r, reguaRelevante){
     const j1 = this.criterioPadrao(r);
     const j2 = this.criterioJ2(r);
     if(j1===j2) return [];
     const fields = ['fm','mg','sk','mc'];
-    const impacted = fields.filter(field => this.windowFieldImpactsRow(r, field));
+    let impacted;
+    if(reguaRelevante){
+      const descendo = (this.ORDER[j1] ?? 0) < (this.ORDER[j2] ?? 0);
+      const crit = this.DEFAULT_CRITERIA[descendo ? j2 : j1];
+      impacted = crit ? fields.filter(f=>{
+        const min = this.criteriaValue(crit[f]);
+        const v1 = this.rowMetricValueAt(r, f, 0), v2 = this.rowMetricValueAt(r, f, 1);
+        return descendo ? v1 < min : (v2 < min && v1 >= min);
+      }) : [];
+    } else {
+      impacted = fields.filter(field => this.windowFieldImpactsRow(r, field));
+    }
     return impacted.length ? impacted : fields;
   }
 
