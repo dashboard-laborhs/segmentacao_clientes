@@ -2304,7 +2304,12 @@ class Component extends DCLogic {
     const labels = {fm:'Faturamento', mg:'Cash Margin', sk:'Média SKUs', mc:'Meses c/ compra'};
     const up = {fm:0, mg:0, sk:0, mc:0}, down = {fm:0, mg:0, sk:0, mc:0};
     let total = 0, totalUp = 0, totalDown = 0;
+    // Em modo operacional usa a mesma base e a mesma regua da aba Tendencia das
+    // Mudancas: ignora clientes sem classificacao no ultimo fechado (so existem
+    // na previa de hoje) e conta como motivo so o criterio que importa.
+    const op = this.state.dataMode === 'operacional';
     this.agruparRows(this.data.RAW).forEach(r=>{
+      if(op && this.criterioJ2(r) === 'SEM SEGMENTAÇÃO') return;
       const reasons = this.windowChangeReasons(r);
       if(!reasons.length) return;
       total++;
@@ -2495,22 +2500,23 @@ class Component extends DCLogic {
     return reasons.includes(reason);
   }
 
+  // Mesma regra de motivoMudanca da aba Tendencia, em todas as visoes: caindo,
+  // os criterios abaixo do minimo do segmento anterior; subindo, os que passaram
+  // a atingir o minimo do segmento novo. (Antes contava qualquer cruzamento de
+  // faixa, ex.: SKUs saindo da regua Platinum de um cliente que caiu de Gold.)
   windowChangeReasons(r){
     const j1 = this.criterioPadrao(r);
     const j2 = this.criterioJ2(r);
     if(j1===j2) return [];
     const fields = ['fm','mg','sk','mc'];
-    const impacted = fields.filter(field => this.windowFieldImpactsRow(r, field));
+    const descendo = (this.ORDER[j1] ?? 0) < (this.ORDER[j2] ?? 0);
+    const crit = this.DEFAULT_CRITERIA[descendo ? j2 : j1];
+    const impacted = crit ? fields.filter(f=>{
+      const min = this.criteriaValue(crit[f]);
+      const v1 = this.rowMetricValueAt(r, f, 0), v2 = this.rowMetricValueAt(r, f, 1);
+      return descendo ? v1 < min : (v2 < min && v1 >= min);
+    }) : [];
     return impacted.length ? impacted : fields;
-  }
-
-  windowFieldImpactsRow(r, field){
-    const v1 = this.rowMetricValueAt(r, field, 0);
-    const v2 = this.rowMetricValueAt(r, field, 1);
-    return ['DIAMOND','PLATINUM','GOLD'].some(level => {
-      const min = this.criteriaValue(this.DEFAULT_CRITERIA[level]?.[field]);
-      return (v1 >= min) !== (v2 >= min);
-    });
   }
 
   criteriaValue(value){
